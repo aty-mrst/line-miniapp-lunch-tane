@@ -1,0 +1,53 @@
+{
+  "_note": "開発用サンプルデータ。デザイン（design/LunchApp.dc.html）と同一。現在時刻は 2026-09-28 12:05 JST を想定。",
+  "users": [
+    { "key": "me", "lineUserId": "U_dev_tanaka", "name": "田中", "icon": "🐣" },
+    { "key": "sato", "lineUserId": "U_dev_sato", "name": "佐藤", "icon": "🐳" },
+    { "key": "suzuki", "lineUserId": "U_dev_suzuki", "name": "鈴木", "icon": "⚽" },
+    { "key": "yamamoto", "lineUserId": "U_dev_yamamoto", "name": "山本", "icon": "🌻" },
+    { "key": "takahashi", "lineUserId": "U_dev_takahashi", "name": "高橋", "icon": "🐙" },
+    { "key": "ito", "lineUserId": "U_dev_ito", "name": "伊藤", "icon": "🌿" },
+    { "key": "watanabe", "lineUserId": "U_dev_watanabe", "name": "渡辺", "icon": "🦊" },
+    { "key": "nakamura", "lineUserId": "U_dev_nakamura", "name": "中村", "icon": "🍵" },
+    { "key": "kobayashi", "lineUserId": "U_dev_kobayashi", "name": "小林", "icon": "🐻" },
+    { "key": "kato", "lineUserId": "U_dev_kato", "name": "加藤", "icon": "🎸" },
+    { "key": "yoshida", "lineUserId": "U_dev_yoshida", "name": "吉田", "icon": "🐼" }
+  ],
+  "genres": [
+    { "value": "ラーメン", "emoji": "🍜" },
+    { "value": "うどん・そば", "emoji": "🥢" },
+    { "value": "寿司・海鮮", "emoji": "🍣" },
+    { "value": "カレー", "emoji": "🍛" },
+    { "value": "タイ料理", "emoji": "🌶️" },
+    { "value": "和食", "emoji": "🍱" },
+    { "value": "イタリアン", "emoji": "🍝" },
+    { "value": "その他", "emoji": "🍽️" }
+  ],
+  "walks": ["5分以内", "10分以内", "10分以上"],
+  "budgets": ["〜1,000円", "〜1,500円", "1,500円〜"],
+  "places": [
+    { "value": "1階ロビー", "emoji": "🏢" },
+    { "value": "8階エレベーター前", "emoji": "🛗" },
+    { "value": "現地", "emoji": "📍" },
+    { "value": "その他", "emoji": "✏️", "freeText": true }
+  ],
+  "departTimes": ["12:00", "12:15", "12:30", "12:45", "13:00", "13:15"],
+  "shops": [
+    { "key": "s1", "name": "麺処 しおかぜ", "genre": "ラーメン", "walk": "5分以内", "budget": "〜1,000円", "createdBy": "sato", "createdAt": "2026-09-12", "note": "つけ麺が濃厚でおすすめ。11:45前なら並ばずに入れます", "mapUrl": "https://maps.app.goo.gl/shiokaze", "interests": ["kato", "ito", "yoshida"] },
+    { "key": "s2", "name": "定食屋 こまち", "genre": "和食", "walk": "5分以内", "budget": "〜1,000円", "createdBy": "suzuki", "createdAt": "2026-09-10", "note": "日替わりの焼き魚定食がうまい。ご飯おかわり自由", "mapUrl": "https://maps.app.goo.gl/komachi", "interests": ["nakamura", "sato"] },
+    { "key": "s3", "name": "スパイス食堂 ナナ", "genre": "カレー", "walk": "10分以内", "budget": "〜1,500円", "createdBy": "yamamoto", "createdAt": "2026-09-18", "note": "あいがけが最高。辛さは3段階から選べます", "mapUrl": "https://maps.app.goo.gl/nana", "interests": ["watanabe", "kobayashi", "kato", "yoshida"] },
+    { "key": "s4", "name": "すし処 まる寿", "genre": "寿司・海鮮", "walk": "10分以内", "budget": "1,500円〜", "createdBy": "takahashi", "createdAt": "2026-09-05", "note": "ランチの海鮮丼がこの値段でこの量", "mapUrl": "https://maps.app.goo.gl/maruju", "interests": ["suzuki"] },
+    { "key": "s5", "name": "グリーンボウル虎ノ門", "genre": "その他", "walk": "5分以内", "budget": "〜1,500円", "createdBy": "ito", "createdAt": "2026-09-20", "note": "野菜たっぷりで午後眠くならない", "mapUrl": "https://maps.app.goo.gl/greenbowl", "interests": ["yamamoto", "nakamura"] },
+    { "key": "s6", "name": "中華そば 灯", "genre": "ラーメン", "walk": "10分以上", "budget": "〜1,000円", "createdBy": "watanabe", "createdAt": "2026-08-29", "note": "少し歩くけど、澄んだ醤油スープが絶品", "mapUrl": "https://maps.app.goo.gl/akari", "interests": ["sato", "takahashi", "kato"] },
+    { "key": "s7", "name": "おばんざい 小春", "genre": "和食", "walk": "10分以内", "budget": "〜1,500円", "createdBy": "nakamura", "createdAt": "2026-09-02", "note": "小鉢が選べる。落ち着いて話せる店", "mapUrl": "https://maps.app.goo.gl/koharu", "interests": ["ito"] },
+    { "key": "s8", "name": "カレーの森", "genre": "カレー", "walk": "5分以内", "budget": "〜1,000円", "createdBy": "me", "createdAt": "2026-09-24", "note": "キーマカレーが安くて早い", "mapUrl": "https://maps.app.goo.gl/currymori", "interests": ["kobayashi", "suzuki"] }
+  ],
+  "recruits": [
+    { "key": "r1", "shop": "s1", "host": "sato", "date": "2026-09-28", "departTime": "12:15", "place": "1階ロビー", "participants": ["kato"] },
+    { "key": "r2", "shop": "s3", "host": "yamamoto", "date": "2026-09-28", "departTime": "12:30", "place": "8階エレベーター前", "participants": ["watanabe", "kobayashi"] },
+    { "key": "r3", "shop": "s2", "host": "suzuki", "date": "2026-09-28", "departTime": "12:30", "place": "1階ロビー", "participants": [] },
+    { "key": "r4", "shop": "s5", "host": "ito", "date": "2026-09-28", "departTime": "13:00", "place": "1階ロビー", "participants": ["yamamoto"] },
+    { "key": "r5", "shop": "s4", "host": "takahashi", "date": "2026-09-28", "departTime": "13:00", "place": "その他", "placeOther": "虎ノ門ヒルズ駅 A1出口", "participants": [] },
+    { "key": "rc", "shop": "s7", "host": "nakamura", "date": "2026-09-28", "departTime": "11:45", "place": "1階ロビー", "participants": ["ito", "sato"], "_note": "締め切り状態の確認用" }
+  ]
+}

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><meta name="design_doc_mode" content="canvas"><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet"><style>body{margin:0;background:#EFE8DE;font-family:'Noto Sans JP',system-ui,sans-serif;color:#2A211B}a{color:#A8360F}a:hover{color:#D9481F}.dv-turn{padding:44px 48px 40px;border-bottom:1px solid rgba(42,33,27,.1);scroll-margin-top:16px}.dv-thd{display:flex;align-items:baseline;gap:12px;margin:0 0 8px}.dv-tid{font:700 12px ui-monospace,Menlo,monospace;padding:4px 8px;background:#2A211B;color:#fff;border-radius:5px;text-decoration:none}.dv-tname{font:700 24px/1.3 'Zen Maru Gothic',sans-serif;color:#2A211B}.dv-desc{font:400 13px/1.7 'Noto Sans JP',sans-serif;color:#6B5E54;margin:0 0 28px;max-width:760px}.dv-opts{display:flex;flex-wrap:wrap;gap:40px 36px;align-items:flex-start}.dv-opt{flex:none;display:flex;flex-direction:column;gap:18px;scroll-margin-top:16px;padding:0 8px 8px}.dv-oid{font:700 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(42,33,27,.1);color:#2A211B;border-radius:5px;text-decoration:none}.dv-olabel{display:flex;align-items:center;gap:8px;font:700 13px/1.3 'Noto Sans JP',sans-serif;color:#2A211B;margin-left:-8px}.req{font:700 10.5px/1 'Noto Sans JP',sans-serif;padding:4px 7px;border-radius:999px;background:#D9481F;color:#fff}.opt{font:700 10.5px/1 'Noto Sans JP',sans-serif;padding:4px 7px;border-radius:999px;background:#fff;color:#6B5E54;border:1px solid #D8CBBB}.dv-opt:target .dv-oid{background:#D9481F;color:#fff}</style></helmet>
+
+<section class="dv-turn" id="intro" style="background:#FFF7EC">
+<div style="display:flex;flex-wrap:wrap;gap:48px;align-items:flex-start">
+<div style="flex:1 1 420px;max-width:620px;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;align-items:center;gap:14px"><div style="width:64px;height:64px;border-radius:50%;background:#E2F3E6;display:grid;place-items:center;font-size:36px">🌱</div><div><div style="font:700 34px/1.2 'Zen Maru Gothic',sans-serif">ランチのたね</div><div style="font:500 14px 'Noto Sans JP',sans-serif;color:#6B5E54">LINEミニアプリ UIデザイン ／ 社内コンペ提出用</div></div></div>
+<p style="margin:8px 0 0;font:400 15px/1.8 'Noto Sans JP',sans-serif;text-wrap:pretty">スタイル提案は<b>「ごはんのぬくもり × たねの芽」</b>。炊きたてご飯のようなクリーム地に、食欲をそそるトマト色を1色だけ「押すボタン」に使います。「気になる」は芽（🌱）とからし色、「参加中」は若葉色。色の意味を固定することで、初めての人でも“オレンジ＝押すところ”とすぐ分かるようにしました。</p>
+<p style="margin:0;font:400 13px/1.7 'Noto Sans JP',sans-serif;color:#6B5E54">各スマホ画面は実際にタップできます（その状態からスタート）。最初から通しで触る場合は「触れるプロトタイプ」へ。</p>
+</div>
+<div style="flex:1 1 360px;max-width:520px;background:#fff;border:1px solid #EFE4D6;border-radius:20px;padding:20px 22px;display:flex;flex-direction:column;gap:12px">
+<div style="font:700 15px 'Zen Maru Gothic',sans-serif">迷わせないための5つの約束</div>
+<div style="display:grid;grid-template-columns:28px 1fr;gap:10px 8px;font:400 13px/1.6 'Noto Sans JP',sans-serif">
+<b style="color:#D9481F">1</b><span>1画面にメインボタン（トマト色）は1つだけ。常に画面下の同じ位置</span>
+<b style="color:#D9481F">2</b><span>押せないボタンは灰色にし、その下に「あと◯つです」と理由を書く</span>
+<b style="color:#D9481F">3</b><span>選択肢はすべてタップ。文字入力は名前・店名・ひとことだけ（リンクは「貼り付け」ボタン）</span>
+<b style="color:#D9481F">4</b><span>操作の結果は必ずトーストで返す（「参加しました。12:15に1階ロビー集合です」）</span>
+<b style="color:#D9481F">5</b><span>タップ領域は高さ44px以上、本文は15px以上</span>
+</div>
+</div>
+</div>
+</section>
+
+<section class="dv-turn" id="rules">
+<div class="dv-thd"><a class="dv-tid" href="#rules">R</a><span class="dv-tname">デザインルール</span></div>
+<p class="dv-desc">色・文字・角丸・余白・部品のルール。LINEのヘッダー（白・グレー線）に自然につながるよう、アプリ内は白カード＋クリーム背景でまとめています。</p>
+<div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+
+<div style="flex:1 1 520px;max-width:640px;background:#fff;border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:14px">
+<div style="font:700 15px 'Zen Maru Gothic',sans-serif">カラー</div>
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px">
+<div style="display:flex;flex-direction:column;gap:6px"><div style="height:56px;border-radius:12px;background:#D9481F"></div><b style="font-size:12px">トマト #D9481F</b><span style="font-size:11px;color:#6B5E54;line-height:1.5">メインボタン・押せる所</span></div>
+<div style="display:flex;flex-direction:column;gap:6px"><div style="height:56px;border-radius:12px;background:#FFE8DC;border:1px solid #F4C3AE"></div><b style="font-size:12px">トマト淡 #FFE8DC</b><span style="font-size:11px;color:#6B5E54;line-height:1.5">選択中・サブ導線（文字 #A8360F）</span></div>
+<div style="display:flex;flex-direction:column;gap:6px"><div style="height:56px;border-radius:12px;background:#E8A710"></div><b style="font-size:12px">からし #E8A710</b><span style="font-size:11px;color:#6B5E54;line-height:1.5">気になる（淡 #FFF3D1／文字 #7A5500）</span></div>
+<div style="display:flex;flex-direction:column;gap:6px"><div style="height:56px;border-radius:12px;background:#2F8F4E"></div><b style="font-size:12px">若葉 #2F8F4E</b><span style="font-size:11px;color:#6B5E54;line-height:1.5">参加中・完了（淡 #E2F3E6）</span></div>
+<div style="display:flex;flex-direction:column;gap:6px"><div style="height:56px;border-radius:12px;background:#2A211B"></div><b style="font-size:12px">しょうゆ #2A211B</b><span style="font-size:11px;color:#6B5E54;line-height:1.5">文字・トースト</span></div>
+<div style="display:flex;flex-direction:column;gap:6px"><div style="height:56px;border-radius:12px;background:#6B5E54"></div><b style="font-size:12px">ほうじ茶 #6B5E54</b><span style="font-size:11px;color:#6B5E54;line-height:1.5">補足文字</span></div>
+<div style="display:flex;flex-direction:column;gap:6px"><div style="height:56px;border-radius:12px;background:#FFF7EC;border:1px solid #EFE4D6"></div><b style="font-size:12px">ごはん #FFF7EC</b><span style="font-size:11px;color:#6B5E54;line-height:1.5">背景（カードは白、線 #EFE4D6）</span></div>
+<div style="display:flex;flex-direction:column;gap:6px"><div style="height:56px;border-radius:12px;background:#C8302B"></div><b style="font-size:12px">うめ #C8302B</b><span style="font-size:11px;color:#6B5E54;line-height:1.5">エラー・削除（淡 #FDE8E6）</span></div>
+</div>
+</div>
+
+<div style="flex:1 1 360px;max-width:460px;background:#fff;border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:12px">
+<div style="font:700 15px 'Zen Maru Gothic',sans-serif">文字</div>
+<div style="font:400 12px/1.6 'Noto Sans JP',sans-serif;color:#6B5E54">見出し・時刻＝Zen Maru Gothic（丸み＝親しみ）／本文＝Noto Sans JP</div>
+<div style="display:grid;grid-template-columns:96px 1fr;gap:10px 12px;align-items:baseline">
+<span style="font:500 11px ui-monospace,monospace;color:#6B5E54">24 / Bold</span><span style="font:700 24px 'Zen Maru Gothic',sans-serif">登録しました！</span>
+<span style="font:500 11px ui-monospace,monospace;color:#6B5E54">22 / Bold</span><span style="font:700 22px 'Zen Maru Gothic',sans-serif">スパイス食堂 ナナ</span>
+<span style="font:500 11px ui-monospace,monospace;color:#6B5E54">17 / Bold</span><span style="font:700 17px 'Zen Maru Gothic',sans-serif">今日ここ行く人？</span>
+<span style="font:500 11px ui-monospace,monospace;color:#6B5E54">16 / Bold</span><span style="font:700 16px 'Noto Sans JP',sans-serif">ボタン・店名</span>
+<span style="font:500 11px ui-monospace,monospace;color:#6B5E54">15 / Regular</span><span style="font:400 15px 'Noto Sans JP',sans-serif">本文・ひとこと</span>
+<span style="font:500 11px ui-monospace,monospace;color:#6B5E54">13 / Regular</span><span style="font:400 13px 'Noto Sans JP',sans-serif;color:#6B5E54">補足・メタ情報</span>
+<span style="font:500 11px ui-monospace,monospace;color:#6B5E54">11–12 / Bold</span><span style="font:700 11px 'Noto Sans JP',sans-serif">タグ・バッジ（最小）</span>
+</div>
+</div>
+
+<div style="flex:1 1 360px;max-width:460px;background:#fff;border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:14px">
+<div style="font:700 15px 'Zen Maru Gothic',sans-serif">角丸・余白・サイズ</div>
+<div style="display:flex;gap:14px;align-items:flex-end">
+<div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:56px;height:44px;border:2px solid #D9481F;border-radius:4px"></div><span style="font-size:11px">4 タグ</span></div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:56px;height:44px;border:2px solid #D9481F;border-radius:12px"></div><span style="font-size:11px">12 入力・選択</span></div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:56px;height:44px;border:2px solid #D9481F;border-radius:16px"></div><span style="font-size:11px">16 カード</span></div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:56px;height:44px;border:2px solid #D9481F;border-radius:20px"></div><span style="font-size:11px">20 ダイアログ</span></div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:56px;height:44px;border:2px solid #D9481F;border-radius:999px"></div><span style="font-size:11px">全丸 ボタン</span></div>
+</div>
+<div style="font:400 13px/1.8 'Noto Sans JP',sans-serif">余白：4 / 8 / 12 / 16 / 24（画面左右16、セクション間24）<br>高さ：メインボタン52 ／ サブ・選択44〜48 ／ チップ36<br>アイコン：一覧22〜38、店の絵文字は丸い下地に入れる</div>
+</div>
+
+<div style="flex:1 1 520px;max-width:640px;background:#fff;border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:14px">
+<div style="font:700 15px 'Zen Maru Gothic',sans-serif">部品</div>
+<div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+<span style="height:52px;padding:0 24px;border-radius:999px;background:#D9481F;color:#fff;font:700 16px 'Noto Sans JP',sans-serif;display:flex;align-items:center">今日ここ行く</span>
+<span style="height:52px;padding:0 24px;border-radius:999px;background:#EDE6DD;color:#8A7D71;font:700 16px 'Noto Sans JP',sans-serif;display:flex;align-items:center">押せない</span>
+<span style="height:48px;padding:0 20px;border-radius:999px;background:#fff;border:1.5px solid #E3D6C6;font:700 15px 'Noto Sans JP',sans-serif;display:flex;align-items:center">📍 マップで開く</span>
+<span style="height:48px;padding:0 20px;border-radius:999px;background:#FFF3D1;border:1.5px solid #E8A710;color:#7A5500;font:700 15px 'Noto Sans JP',sans-serif;display:flex;align-items:center">🌱 気になる ✓</span>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+<span style="height:44px;padding:0 16px;border-radius:999px;background:#D9481F;color:#fff;font:700 14px 'Noto Sans JP',sans-serif;display:flex;align-items:center">参加する</span>
+<span style="height:44px;padding:0 14px;border-radius:999px;background:#E2F3E6;border:1.5px solid #9FD3AE;color:#22703C;font:700 14px 'Noto Sans JP',sans-serif;display:flex;align-items:center">参加中 ✓</span>
+<span style="height:36px;padding:0 12px;border-radius:999px;background:#fff;border:1.5px solid #E3D6C6;font:700 13px 'Noto Sans JP',sans-serif;display:flex;align-items:center">🍜 ラーメン</span>
+<span style="height:36px;padding:0 12px;border-radius:999px;background:#FFE8DC;border:1.5px solid #D9481F;color:#A8360F;font:700 13px 'Noto Sans JP',sans-serif;display:flex;align-items:center">✓ 5分以内</span>
+<span style="font:700 11px/1 'Noto Sans JP',sans-serif;color:#A8360F;background:#FFE8DC;padding:4px 6px;border-radius:4px">必須</span>
+<span style="font:700 11px/1 'Noto Sans JP',sans-serif;color:#6B5E54;background:#F1EBE3;padding:4px 6px;border-radius:4px">任意</span>
+</div>
+<div style="display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:14px;background:#2A211B;color:#fff;font:500 14px 'Noto Sans JP',sans-serif;max-width:360px"><span style="width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center;font:700 12px sans-serif">✓</span>トースト：画面下のボタンの上に2.8秒</div>
+</div>
+</div>
+</section>
+
+<section class="dv-turn" id="live" style="background:#F7F1E8">
+<div class="dv-thd"><a class="dv-tid" href="#live">▶</a><span class="dv-tname">触れるプロトタイプ（起動から通しで）</span></div>
+<p class="dv-desc">起動 → 登録 → ホーム → 店舗 → 「今日ここ行く」→ 募集完了 → ホームに自分の募集、まで一通り操作できます。</p>
+<div class="dv-opts"><div class="dv-opt" id="p1"><dc-import name="LunchApp" variant="live" hint-size="375px,812px"></dc-import></div></div>
+</section>
+
+<section class="dv-turn" id="s0">
+<div class="dv-thd"><a class="dv-tid" href="#s0">⓪</a><span class="dv-tname">ユーザー登録（初回のみ）</span></div>
+<p class="dv-desc">入力は名前だけ。アイコンは大きな丸をタップすると絵文字キーボードが開きます。両方そろうと「はじめる」が押せて、表示のされ方をプレビュー。</p>
+<div class="dv-opts">
+<sc-if value="{{ showOptional }}" hint-placeholder-val="{{ true }}"><div class="dv-opt" id="0-1"><div class="dv-olabel"><a class="dv-oid" href="#0-1">⓪-1</a>起動中<span class="opt">余裕があれば</span></div><dc-import name="LunchApp" variant="reg-boot" hint-size="375px,812px"></dc-import></div></sc-if>
+<div class="dv-opt" id="0-2"><div class="dv-olabel"><a class="dv-oid" href="#0-2">⓪-2</a>未入力<span class="req">必須</span></div><dc-import name="LunchApp" variant="reg-empty" hint-size="375px,812px"></dc-import></div>
+<div class="dv-opt" id="0-3"><div class="dv-olabel"><a class="dv-oid" href="#0-3">⓪-3</a>アイコン入力中<span class="req">必須</span></div><dc-import name="LunchApp" variant="reg-kb" hint-size="375px,812px"></dc-import></div>
+<div class="dv-opt" id="0-4"><div class="dv-olabel"><a class="dv-oid" href="#0-4">⓪-4</a>入力済み<span class="req">必須</span></div><dc-import name="LunchApp" variant="reg-filled" hint-size="375px,812px"></dc-import></div>
+<sc-if value="{{ showOptional }}" hint-placeholder-val="{{ true }}"><div class="dv-opt" id="0-5"><div class="dv-olabel"><a class="dv-oid" href="#0-5">⓪-5</a>アイコンの入力エラー<span class="opt">余裕があれば</span></div><dc-import name="LunchApp" variant="reg-error" hint-size="375px,812px"></dc-import></div></sc-if>
+</div>
+</section>
+
+<section class="dv-turn" id="s1">
+<div class="dv-thd"><a class="dv-tid" href="#s1">①</a><span class="dv-tname">ホーム</span></div>
+<p class="dv-desc">上から「おすすめ3店」→「今日ここ行く人？」。参加ボタンはカードの右端に固定。画面下には常に「すべての店」「＋ お店を登録」。自分が気になっている店の募集はからし色で目立たせます。</p>
+<div class="dv-opts">
+<div class="dv-opt" id="1-1"><div class="dv-olabel"><a class="dv-oid" href="#1-1">①-1</a>通常（募集1件）<span class="req">必須</span></div><dc-import name="LunchApp" variant="home-one" hint-size="375px,812px"></dc-import></div>
+<div class="dv-opt" id="1-2"><div class="dv-olabel"><a class="dv-oid" href="#1-2">①-2</a>募集が複数（3件）<span class="req">必須</span></div><dc-import name="LunchApp" variant="home-multi" hint-size="375px,812px"></dc-import></div>
+<div class="dv-opt" id="1-3"><div class="dv-olabel"><a class="dv-oid" href="#1-3">①-3</a>募集が4件以上（折りたたみ）<span class="req">必須</span></div><dc-import name="LunchApp" variant="home-many" hint-size="375px,812px"></dc-import></div>
+<sc-if value="{{ showOptional }}" hint-placeholder-val="{{ true }}"><div class="dv-opt" id="1-4"><div class="dv-olabel"><a class="dv-oid" href="#1-4">①-4</a>募集が4件以上・展開後<span class="opt">余裕があれば</span></div><dc-import name="LunchApp" variant="home-many-open" hint-size="375px,812px"></dc-import></div></sc-if>
+<div class="dv-opt" id="1-5"><div class="dv-olabel"><a class="dv-oid" href="#1-5">①-5</a>今日の募集がない<span class="req">必須</span></div><dc-import name="LunchApp" variant="home-no-recruit" hint-size="375px,812px"></dc-import></div>
+<div class="dv-opt" id="1-6"><div class="dv-olabel"><a class="dv-oid" href="#1-6">①-6</a>お店が0件<span class="req">必須</span></div><dc-import name="LunchApp" variant="home-no-shops" hint-size="375px,812px"></dc-import></div>
+<sc-if value="{{ showOptional }}" hint-placeholder-val="{{ true }}"><div class="dv-opt" id="1-7"><div class="dv-olabel"><a class="dv-oid" href="#1-7">①-7</a>読み込み中<span class="opt">余裕があれば</span></div><dc-import name="LunchApp" variant="home-loading" hint-size="375px,812px"></dc-import></div>
+<div class="dv-opt" id="1-8"><div class="dv-olabel"><a class="dv-oid" href="#1-8">①-8</a>読み込みエラー<span class="opt">余裕があれば</span></div><dc-import name="LunchApp" variant="home-error" hint-size="375px,812px"></dc-import></div></sc-if>
+</div>
+</section>
+
+<section class="dv-turn" id="s2">
+<div class="dv-thd"><a class="dv-tid" href="#s2">②</a><span class="dv-tname">店舗ページ</span></div>
+<p class="dv-desc">画面下に操作をまとめ、いちばん下の大きなボタンが「今日ここ行く」。「気になる」を押すと自分のアイコンが先頭に入り、からし色の枠で分かります。</p>
+<div class="dv-opts">
+<div class="dv-opt" id="2-1"><div class="dv-olabel"><a class="dv-oid" href="#2-1">②-1</a>通常（気になる前）<span class="req">必須</span></div><dc-import name="LunchApp" variant="shop-normal" hint-size="375px,812px"></dc-import></div>
+<div class="dv-opt" id="2-2"><div class="dv-olabel"><a class="dv-oid" href="#2-2">②-2</a>気になる済み<span class="req">必須</span></div><dc-import name="LunchApp" variant="shop-liked" hint-size="375px,812px"></dc-import></div>
+<div class="dv-opt" id="2-3"><div class="dv-olabel"><a class="dv-oid" href="#2-3">②-3</a>今日の募集あり<span class="req">必須</span></div><dc-import name="LunchApp" variant="shop-recruit" hint-size="375px,812px"></dc-import></div>
+<sc-if value="{{ showOptional }}" hint-placeholder-val="{{ true }}"><div class="dv-opt" id="2-4"><div class="dv-olabel"><a class="dv-oid" href="#2-4">②-4</a>自分が登録した店<span class="opt">余裕があれば</span></div><dc-import name="LunchApp" variant="shop-mine" hint-size="375px,812px"></dc-import></div>
+<div class="dv-opt" id="2-5"><div class="dv-olabel"><a class="dv-oid" href="#2-5">②-5</a>削除の確認<span class="opt">余裕があれば</span></div><dc-import name="LunchApp" variant="shop-delete" hint-size="375px,812px"></dc-import></div></sc-if>
+</div>
+</section>
+
+<section class="dv-turn" id="s3">
+<div class="dv-thd"><a class="dv-tid" href="#s3">③</a><span class="dv-tname">お店を登録</span></div>
+<p class="dv-desc">リンクは「📋 貼り付け」ボタンで入れられます。ジャンル・徒歩・予算はすべてタップ選択。押せない間は「必須項目があと◯つです」と表示。</p>
+<div class="dv-opts">
+<div class="dv-opt" id="3-1"><div class="dv-olabel"><a class="dv-oid" href="#3-1">③-1</a>未入力<span class="req">必須</span></div><dc-import name="LunchApp" variant="add-empty" hint-size="375px,812px"></dc-import></div>
+<div class="dv-opt" id="3-2"><div class="dv-olabel"><a class="dv-oid" href="#3-2">③-2</a>入力済み<span class="req">必須</span></div><dc-import name="LunchApp" variant="add-filled" hint-size="375px,812px"></dc-import></div>
+<div class="dv-opt" id="3-3"><div class="dv-olabel"><a class="dv-oid" href="#3-3">③-3</a>リンクの形式エラー<span class="req">必須</span></div><dc-import name="LunchApp" variant="add-url-error" hint-size="375px,812px"></dc-import></div>
+<div class="dv-opt" id="3-4"><div class="dv-olabel"><a class="dv-oid" href="#3-4">③-4</a>登録済みの店<span class="req">必須</span></div><dc-import name="LunchApp" variant="add-dup" hint-size="375px,812px"></dc-import></div>
+<div class="dv-opt" id="3-5"><div class="dv-olabel"><a class="dv-oid" href="#3-5">③-5</a>登録完了<span class="req">必須</span></div><dc-import name="LunchApp" variant="add-done" hint-size="375px,812px"></dc-import></div>
+<sc-if value="{{ showOptional }}" hint-placeholder-val="{{ true }}"><div class="dv-opt" id="3-6"><div class="dv-olabel"><a class="dv-oid" href="#3-6">③-6</a>登録に失敗<span class="opt">余裕があれば</span></div><dc-import name="LunchApp" variant="add-fail" hint-size="375px,812px"></dc-import></div></sc-if>
+</div>
+</section>
+
+<section class="dv-turn" id="s4">
+<div class="dv-thd"><a class="dv-tid" href="#s4">④</a><span class="dv-tname">今日ここ行く（募集の作成）</span></div>
+<p class="dv-desc">お店は自動で入り、選ぶのは出発時間と集合場所だけ。過ぎた時間は打ち消し線で選べません。人数の指定はありません。</p>
+<div class="dv-opts">
+<div class="dv-opt" id="4-1"><div class="dv-olabel"><a class="dv-oid" href="#4-1">④-1</a>募集の作成<span class="req">必須</span></div><dc-import name="LunchApp" variant="rec-create" hint-size="375px,812px"></dc-import></div>
+<div class="dv-opt" id="4-2"><div class="dv-olabel"><a class="dv-oid" href="#4-2">④-2</a>募集完了<span class="req">必須</span></div><dc-import name="LunchApp" variant="rec-done" hint-size="375px,812px"></dc-import></div>
+<div class="dv-opt" id="4-3"><div class="dv-olabel"><a class="dv-oid" href="#4-3">④-3</a>参加した（ホームで直後）<span class="req">必須</span></div><dc-import name="LunchApp" variant="rec-joined" hint-size="375px,812px"></dc-import></div>
+<sc-if value="{{ showOptional }}" hint-placeholder-val="{{ true }}"><div class="dv-opt" id="4-4"><div class="dv-olabel"><a class="dv-oid" href="#4-4">④-4</a>自分の募集の取り消し確認<span class="opt">余裕があれば</span></div><dc-import name="LunchApp" variant="rec-cancel" hint-size="375px,812px"></dc-import></div></sc-if>
+<div class="dv-opt" id="4-5"><div class="dv-olabel"><a class="dv-oid" href="#4-5">④-5</a>募集カードの状態<span class="req">必須</span></div><div style="border-radius:20px;overflow:hidden;border:1px solid #E3D6C6"><dc-import name="LunchApp" variant="cards" hint-size="375px,640px"></dc-import></div></div>
+</div>
+</section>
+
+<section class="dv-turn" id="s5">
+<div class="dv-thd"><a class="dv-tid" href="#s5">⑤</a><span class="dv-tname">みんなの店（一覧）</span></div>
+<p class="dv-desc">徒歩・予算・ジャンルをチップで複数選択。件数はすぐ変わり、条件があるときだけ「条件を解除」が出ます。</p>
+<div class="dv-opts">
+<div class="dv-opt" id="5-1"><div class="dv-olabel"><a class="dv-oid" href="#5-1">⑤-1</a>通常<span class="req">必須</span></div><dc-import name="LunchApp" variant="list-normal" hint-size="375px,812px"></dc-import></div>
+<div class="dv-opt" id="5-2"><div class="dv-olabel"><a class="dv-oid" href="#5-2">⑤-2</a>絞り込み中<span class="req">必須</span></div><dc-import name="LunchApp" variant="list-filtered" hint-size="375px,812px"></dc-import></div>
+<div class="dv-opt" id="5-3"><div class="dv-olabel"><a class="dv-oid" href="#5-3">⑤-3</a>該当なし<span class="req">必須</span></div><dc-import name="LunchApp" variant="list-none" hint-size="375px,812px"></dc-import></div>
+</div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showOptional&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;表示&quot;}}">
+class Component extends DCLogic {
+  renderVals() { return { showOptional: this.props.showOptional ?? true }; }
+}
+</script>
+</body>
+</html>

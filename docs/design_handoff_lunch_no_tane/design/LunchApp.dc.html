@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet"><style>body{margin:0}.la-scroll::-webkit-scrollbar{display:none}.la-scroll{scrollbar-width:none}input,textarea,button{font-family:inherit}</style></helmet>
+<sc-if value="{{ isSheet }}" hint-placeholder-val="{{ false }}">
+<div style="width:375px;box-sizing:border-box;padding:20px 16px 24px;background:#FFF7EC;font-family:'Noto Sans JP','Hiragino Sans',system-ui,sans-serif;color:#2A211B;display:flex;flex-direction:column;gap:18px">
+<sc-for list="{{ sheetCards }}" as="item" hint-placeholder-count="4">
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="font:700 12px/1.3 'Noto Sans JP',sans-serif;color:#6B5E54">{{ item.stateLabel }}</div>
+<div onClick="{{ item.open }}" style="display:flex;flex-direction:column;gap:8px;padding:12px 12px 12px 14px;background:{{ item.bg }};border:1.5px solid {{ item.bd }};border-radius:16px;opacity:{{ item.op }};cursor:pointer">
+<sc-if value="{{ item.liked }}"><div style="align-self:flex-start;font:700 11px/1 'Noto Sans JP',sans-serif;color:#7A5500;background:#FFF3D1;padding:5px 9px;border-radius:999px">🌱 あなたが気になっている店</div></sc-if>
+<sc-if value="{{ item.isMine }}"><div style="align-self:flex-start;font:700 11px/1 'Noto Sans JP',sans-serif;color:#A8360F;background:#FFE8DC;padding:5px 9px;border-radius:999px">あなたの募集</div></sc-if>
+<div style="display:flex;align-items:center;gap:12px">
+<div style="width:50px;flex:none;display:flex;flex-direction:column;align-items:center"><div style="font:700 19px/1.1 'Zen Maru Gothic',sans-serif;text-decoration:{{ item.timeDeco }}">{{ item.time }}</div><div style="font:500 11px/1.5 'Noto Sans JP',sans-serif;color:#6B5E54">出発</div></div>
+<div style="width:1px;align-self:stretch;background:#EFE4D6"></div>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px"><div style="font:700 15px/1.35 'Noto Sans JP',sans-serif">{{ item.emoji }} {{ item.shopName }}</div><div style="display:flex;align-items:center;gap:6px;font:400 12px/1.3 'Noto Sans JP',sans-serif;color:#6B5E54"><span style="width:22px;height:22px;flex:none;border-radius:50%;background:#FFF1E0;display:grid;place-items:center;font-size:13px">{{ item.hostIcon }}</span><span>{{ item.hostName }} · {{ item.place }}</span></div><div style="font:700 12px/1.3 'Noto Sans JP',sans-serif">{{ item.countText }}</div></div>
+<sc-if value="{{ item.isOpen }}"><button onClick="{{ item.join }}" style="flex:none;min-width:88px;height:44px;padding:0 14px;border:0;border-radius:999px;background:#D9481F;color:#fff;font:700 14px 'Noto Sans JP',sans-serif;cursor:pointer">参加する</button></sc-if>
+<sc-if value="{{ item.isJoined }}"><button onClick="{{ item.join }}" style="flex:none;min-width:88px;height:44px;padding:0 12px;border:1.5px solid #9FD3AE;border-radius:999px;background:#E2F3E6;color:#22703C;font:700 14px 'Noto Sans JP',sans-serif;cursor:pointer">参加中 ✓</button></sc-if>
+<sc-if value="{{ item.isMine }}"><button onClick="{{ item.cancel }}" style="flex:none;min-width:88px;height:44px;padding:0 12px;border:1.5px solid #E3D6C6;border-radius:999px;background:#fff;color:#C8302B;font:700 14px 'Noto Sans JP',sans-serif;cursor:pointer">取り消す</button></sc-if>
+<sc-if value="{{ item.isClosed }}"><button onClick="{{ item.noop }}" style="flex:none;min-width:88px;height:44px;padding:0 12px;border:0;border-radius:999px;background:#EDE6DD;color:#6B5E54;font:700 14px 'Noto Sans JP',sans-serif">締め切り</button></sc-if>
+</div>
+</div>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ inFrame }}" hint-placeholder-val="{{ true }}">
+<div style="width:375px;height:812px;position:relative;overflow:hidden;background:#FFF7EC;font-family:'Noto Sans JP','Hiragino Sans',system-ui,sans-serif;color:#2A211B;display:flex;flex-direction:column;border-radius:36px;box-shadow:0 0 0 8px #1C1814,0 20px 40px rgba(42,33,27,.25)">
+<div style="height:44px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 22px 0 30px;background:#fff;font:600 15px -apple-system,system-ui,sans-serif;color:#111"><span>12:05</span><div style="display:flex;align-items:center;gap:6px"><div style="display:flex;align-items:flex-end;gap:2px;height:11px"><div style="width:3px;height:4px;background:#111;border-radius:1px"></div><div style="width:3px;height:6px;background:#111;border-radius:1px"></div><div style="width:3px;height:8px;background:#111;border-radius:1px"></div><div style="width:3px;height:11px;background:#111;border-radius:1px"></div></div><span style="font-size:12px">5G</span><div style="width:24px;height:12px;box-sizing:border-box;border:1.5px solid #111;border-radius:4px;padding:1.5px"><div style="width:72%;height:100%;background:#111;border-radius:1.5px"></div></div></div></div>
+<div style="height:44px;flex:none;display:flex;align-items:center;background:#fff;border-bottom:1px solid #E8E8E8;color:#111"><div style="width:52px;text-align:center;font-size:18px">✕</div><div style="flex:1;text-align:center;font:700 16px -apple-system,'Hiragino Sans',sans-serif">ランチのたね</div><div style="width:52px;text-align:center;font-size:18px;letter-spacing:1px">⋯</div></div>
+<div style="flex:1;position:relative;overflow:hidden">
+
+<sc-if value="{{ isBoot }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:#FFF7EC">
+<div style="width:104px;height:104px;border-radius:50%;background:#E2F3E6;display:grid;place-items:center;font-size:56px">🌱</div>
+<div style="font:700 26px/1.2 'Zen Maru Gothic',sans-serif">ランチのたね</div>
+<div style="display:flex;gap:8px;margin-top:12px"><div style="width:8px;height:8px;border-radius:50%;background:#D9481F"></div><div style="width:8px;height:8px;border-radius:50%;background:#F0A58A"></div><div style="width:8px;height:8px;border-radius:50%;background:#F7D3C4"></div></div>
+<div style="font:400 13px/1.5 'Noto Sans JP',sans-serif;color:#6B5E54">準備しています…</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isReg }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;display:flex;flex-direction:column">
+<div class="la-scroll" style="flex:1;overflow-y:auto;padding:28px 16px 24px;display:flex;flex-direction:column;gap:20px">
+<div style="display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center">
+<div style="width:64px;height:64px;border-radius:50%;background:#E2F3E6;display:grid;place-items:center;font-size:34px">🌱</div>
+<div style="font:700 22px/1.35 'Zen Maru Gothic',sans-serif">ランチのたねへようこそ</div>
+<div style="font:400 14px/1.6 'Noto Sans JP',sans-serif;color:#6B5E54;text-wrap:pretty">社員が見つけたランチの店が集まる場所です。<br>まずは、みんなに表示される姿を決めましょう。</div>
+</div>
+<div style="background:#fff;border:1px solid #EFE4D6;border-radius:20px;padding:20px 16px;display:flex;flex-direction:column;gap:20px">
+<div style="display:flex;flex-direction:column;gap:10px;align-items:center">
+<div style="align-self:stretch;display:flex;align-items:center;gap:6px"><span style="font:700 15px 'Noto Sans JP',sans-serif">アイコン</span><span style="font:700 11px/1 'Noto Sans JP',sans-serif;color:#A8360F;background:#FFE8DC;padding:4px 6px;border-radius:4px">必須</span><span style="font:400 12px 'Noto Sans JP',sans-serif;color:#6B5E54;margin-left:auto">好きな絵文字を1つ</span></div>
+<button onClick="{{ openKb }}" style="width:96px;height:96px;border-radius:50%;border:{{ iconBorder }};background:{{ iconBg }};display:grid;place-items:center;cursor:pointer;padding:0">
+<sc-if value="{{ regIconEmpty }}"><span style="display:flex;flex-direction:column;align-items:center;gap:2px;color:#A8360F"><span style="font:400 30px/1 sans-serif">＋</span><span style="font:700 11px/1.3 'Noto Sans JP',sans-serif">タップして<br>えらぶ</span></span></sc-if>
+<sc-if value="{{ regIconFilled }}"><span style="font-size:{{ iconFont }}">{{ regIcon }}</span></sc-if>
+</button>
+<sc-if value="{{ kbOpen }}"><div style="font:500 12px 'Noto Sans JP',sans-serif;color:#A8360F">キーボードから絵文字を1つ選んでください</div></sc-if>
+<sc-if value="{{ iconErr }}"><div style="font:700 13px/1.4 'Noto Sans JP',sans-serif;color:#C8302B">⚠ 絵文字を1つだけ入力してください</div></sc-if>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;align-items:center;gap:6px"><span style="font:700 15px 'Noto Sans JP',sans-serif">名前</span><span style="font:700 11px/1 'Noto Sans JP',sans-serif;color:#A8360F;background:#FFE8DC;padding:4px 6px;border-radius:4px">必須</span></div>
+<input value="{{ regName }}" onChange="{{ onRegName }}" placeholder="例：田中" style="height:48px;box-sizing:border-box;border:1.5px solid #E3D6C6;border-radius:12px;padding:0 14px;font:400 16px 'Noto Sans JP',sans-serif;color:#2A211B;background:#fff;outline:none">
+</div>
+</div>
+<sc-if value="{{ canStart }}">
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="font:700 12px 'Noto Sans JP',sans-serif;color:#6B5E54">プレビュー</div>
+<div style="display:flex;align-items:center;gap:12px;background:#fff;border:1.5px dashed #E3D6C6;border-radius:16px;padding:14px 16px"><span style="width:44px;height:44px;border-radius:50%;background:#FFF1E0;display:grid;place-items:center;font-size:26px">{{ regIcon }}</span><span style="font:400 15px/1.4 'Noto Sans JP',sans-serif"><b style="font-weight:700">{{ regDisplay }}</b>として表示されます</span></div>
+</div>
+</sc-if>
+</div>
+<div style="flex:none;padding:12px 16px 28px;background:#fff;border-top:1px solid #EFE4D6;display:flex;flex-direction:column;gap:8px">
+<sc-if value="{{ canStart }}"><button onClick="{{ startApp }}" style="height:52px;border:0;border-radius:999px;background:#D9481F;color:#fff;font:700 16px 'Noto Sans JP',sans-serif;cursor:pointer">はじめる</button></sc-if>
+<sc-if value="{{ cannotStart }}"><button disabled="{{ true }}" style="height:52px;border:0;border-radius:999px;background:#EDE6DD;color:#8A7D71;font:700 16px 'Noto Sans JP',sans-serif">はじめる</button><div style="text-align:center;font:400 12px 'Noto Sans JP',sans-serif;color:#6B5E54">アイコンと名前を入れると押せます</div></sc-if>
+</div>
+<sc-if value="{{ kbOpen }}">
+<div onClick="{{ closeKb }}" style="position:absolute;inset:0;bottom:292px"></div>
+<div style="position:absolute;left:0;right:0;bottom:0;height:292px;background:#D3D6DC;display:flex;flex-direction:column;padding:8px 6px 0;box-sizing:border-box;font-family:-apple-system,system-ui,sans-serif">
+<div style="height:34px;margin:0 4px 6px;border-radius:10px;background:#fff;display:flex;align-items:center;padding:0 10px;font-size:14px;color:#8E8E93">🔍 絵文字を検索</div>
+<div style="font:600 11px sans-serif;color:#6D6D72;padding:0 8px 4px">よく使う項目</div>
+<div style="display:grid;grid-template-columns:repeat(8,1fr);gap:2px;flex:1;align-content:start">
+<sc-for list="{{ kbEmojis }}" as="k" hint-placeholder-count="32"><button onClick="{{ k.pick }}" style="height:40px;border:0;background:transparent;font-size:28px;cursor:pointer;padding:0">{{ k.e }}</button></sc-for>
+</div>
+<div style="height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 10px;font-size:15px;color:#555"><span style="font:600 14px sans-serif;background:#ABB0BA;color:#111;padding:6px 10px;border-radius:6px">ABC</span><span style="letter-spacing:10px;font-size:16px;opacity:.6">🕘😀🐻🍔⚽🚗💡</span><span>⌫</span></div>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;display:flex;flex-direction:column">
+<div class="la-scroll" style="flex:1;overflow-y:auto;padding:16px 16px 24px;display:flex;flex-direction:column;gap:24px">
+<div style="display:flex;align-items:center;gap:12px">
+<span style="width:44px;height:44px;flex:none;border-radius:50%;background:#fff;border:1px solid #EFE4D6;display:grid;place-items:center;font-size:24px">{{ meIcon }}</span>
+<div style="display:flex;flex-direction:column;gap:2px"><div style="font:500 12px 'Noto Sans JP',sans-serif;color:#6B5E54">9月28日(月)</div><div style="font:700 18px/1.3 'Zen Maru Gothic',sans-serif">{{ meName }}さん、今日はどこ行く？</div></div>
+</div>
+
+<sc-if value="{{ homeLoading }}">
+<div style="display:flex;flex-direction:column;gap:12px"><div style="width:120px;height:18px;border-radius:6px;background:#F1E7DB"></div><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px"><div style="height:116px;border-radius:16px;background:#F1E7DB"></div><div style="height:116px;border-radius:16px;background:#F1E7DB"></div><div style="height:116px;border-radius:16px;background:#F1E7DB"></div></div></div>
+<div style="display:flex;flex-direction:column;gap:12px"><div style="width:150px;height:18px;border-radius:6px;background:#F1E7DB"></div><div style="height:92px;border-radius:16px;background:#F1E7DB"></div><div style="height:92px;border-radius:16px;background:#F1E7DB"></div></div>
+</sc-if>
+
+<sc-if value="{{ homeError }}">
+<div style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;padding:56px 16px">
+<div style="font-size:48px">😵‍💫</div>
+<div style="font:700 18px/1.4 'Zen Maru Gothic',sans-serif">読み込めませんでした</div>
+<div style="font:400 14px/1.6 'Noto Sans JP',sans-serif;color:#6B5E54">通信状況を確認して、もう一度お試しください</div>
+<button onClick="{{ retry }}" style="margin-top:12px;height:48px;padding:0 28px;border:1.5px solid #E3D6C6;border-radius:999px;background:#fff;color:#2A211B;font:700 15px 'Noto Sans JP',sans-serif;cursor:pointer">↻ 再読み込み</button>
+</div>
+</sc-if>
+
+<sc-if value="{{ homeNoShops }}">
+<div style="background:#fff;border:1px solid #EFE4D6;border-radius:20px;padding:32px 20px 24px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px">
+<div style="width:96px;height:96px;border-radius:50%;background:#E2F3E6;display:grid;place-items:center;font-size:52px">🌱</div>
+<div style="font:700 20px/1.4 'Zen Maru Gothic',sans-serif">まだお店がありません</div>
+<div style="font:400 14px/1.7 'Noto Sans JP',sans-serif;color:#6B5E54;text-wrap:pretty">虎ノ門で見つけた「ここ良かった」を、<br>最初の1店として登録してみませんか？</div>
+<button onClick="{{ goAdd }}" style="margin-top:8px;align-self:stretch;height:52px;border:0;border-radius:999px;background:#D9481F;color:#fff;font:700 16px 'Noto Sans JP',sans-serif;cursor:pointer">＋ 最初のお店を登録</button>
+<div style="font:400 12px 'Noto Sans JP',sans-serif;color:#6B5E54">Googleマップのリンクを貼って、あとは選ぶだけ</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ homeReady }}">
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="font:700 17px 'Zen Maru Gothic',sans-serif">今日のおすすめ</div>
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+<sc-for list="{{ recommend }}" as="r" hint-placeholder-count="3">
+<button onClick="{{ r.open }}" style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:16px 6px 14px;background:#fff;border:1px solid #EFE4D6;border-radius:16px;cursor:pointer;color:#2A211B;min-height:124px">
+<span style="width:56px;height:56px;border-radius:50%;background:#FFF1E0;display:grid;place-items:center;font-size:32px">{{ r.emoji }}</span>
+<span style="font:700 13px/1.4 'Noto Sans JP',sans-serif;text-align:center;text-wrap:pretty">{{ r.name }}</span>
+</button>
+</sc-for>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:center;gap:8px"><div style="font:700 17px 'Zen Maru Gothic',sans-serif">今日ここ行く人？</div><sc-if value="{{ hasRecruits }}"><span style="font:700 12px/1 'Noto Sans JP',sans-serif;color:#A8360F;background:#FFE8DC;padding:5px 8px;border-radius:999px">{{ recruitCount }}件</span></sc-if></div>
+<sc-if value="{{ noRecruits }}">
+<div style="border:1.5px dashed #E3D6C6;border-radius:16px;padding:24px 16px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;background:rgba(255,255,255,.5)">
+<div style="font-size:30px">🍽️</div>
+<div style="font:700 15px/1.5 'Noto Sans JP',sans-serif">まだ募集はありません。</div>
+<div style="font:400 13px/1.6 'Noto Sans JP',sans-serif;color:#6B5E54">おすすめの店から『今日ここ行く』で募集できます</div>
+</div>
+</sc-if>
+<sc-for list="{{ recruitCards }}" as="item" hint-placeholder-count="1">
+<div onClick="{{ item.open }}" style="display:flex;flex-direction:column;gap:8px;padding:12px 12px 12px 14px;background:{{ item.bg }};border:1.5px solid {{ item.bd }};border-radius:16px;opacity:{{ item.op }};cursor:pointer">
+<sc-if value="{{ item.liked }}"><div style="align-self:flex-start;font:700 11px/1 'Noto Sans JP',sans-serif;color:#7A5500;background:#FFF3D1;padding:5px 9px;border-radius:999px">🌱 あなたが気になっている店</div></sc-if>
+<sc-if value="{{ item.isMine }}"><div style="align-self:flex-start;font:700 11px/1 'Noto Sans JP',sans-serif;color:#A8360F;background:#FFE8DC;padding:5px 9px;border-radius:999px">あなたの募集</div></sc-if>
+<div style="display:flex;align-items:center;gap:12px">
+<div style="width:50px;flex:none;display:flex;flex-direction:column;align-items:center"><div style="font:700 19px/1.1 'Zen Maru Gothic',sans-serif;text-decoration:{{ item.timeDeco }}">{{ item.time }}</div><div style="font:500 11px/1.5 'Noto Sans JP',sans-serif;color:#6B5E54">出発</div></div>
+<div style="width:1px;align-self:stretch;background:#EFE4D6"></div>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px"><div style="font:700 15px/1.35 'Noto Sans JP',sans-serif">{{ item.emoji }} {{ item.shopName }}</div><div style="display:flex;align-items:center;gap:6px;font:400 12px/1.3 'Noto Sans JP',sans-serif;color:#6B5E54"><span style="width:22px;height:22px;flex:none;border-radius:50%;background:#FFF1E0;display:grid;place-items:center;font-size:13px">{{ item.hostIcon }}</span><span>{{ item.hostName }} · {{ item.place }}</span></div><div style="font:700 12px/1.3 'Noto Sans JP',sans-serif">{{ item.countText }}</div></div>
+<sc-if value="{{ item.isOpen }}"><button onClick="{{ item.join }}" style="flex:none;min-width:88px;height:44px;padding:0 14px;border:0;border-radius:999px;background:#D9481F;color:#fff;font:700 14px 'Noto Sans JP',sans-serif;cursor:pointer">参加する</button></sc-if>
+<sc-if value="{{ item.isJoined }}"><button onClick="{{ item.join }}" style="flex:none;min-width:88px;height:44px;padding:0 12px;border:1.5px solid #9FD3AE;border-radius:999px;background:#E2F3E6;color:#22703C;font:700 14px 'Noto Sans JP',sans-serif;cursor:pointer">参加中 ✓</button></sc-if>
+<sc-if value="{{ item.isMine }}"><button onClick="{{ item.cancel }}" style="flex:none;min-width:88px;height:44px;padding:0 12px;border:1.5px solid #E3D6C6;border-radius:999px;background:#fff;color:#C8302B;font:700 14px 'Noto Sans JP',sans-serif;cursor:pointer">取り消す</button></sc-if>
+</div>
+</div>
+</sc-for>
+<sc-if value="{{ showMore }}"><button onClick="{{ expand }}" style="height:44px;border:1px solid #EFE4D6;border-radius:12px;background:#fff;color:#2A211B;font:700 14px 'Noto Sans JP',sans-serif;cursor:pointer">ほか{{ moreCount }}件を表示 ▾</button></sc-if>
+<sc-if value="{{ showClose }}"><button onClick="{{ collapse }}" style="height:44px;border:1px solid #EFE4D6;border-radius:12px;background:#fff;color:#2A211B;font:700 14px 'Noto Sans JP',sans-serif;cursor:pointer">閉じる ▴</button></sc-if>
+</div>
+</sc-if>
+</div>
+<sc-if value="{{ showHomeBar }}">
+<div style="flex:none;display:flex;gap:8px;padding:12px 16px 28px;background:#fff;border-top:1px solid #EFE4D6">
+<button onClick="{{ goList }}" style="flex:1;height:52px;border:1.5px solid #E3D6C6;border-radius:999px;background:#fff;color:#2A211B;font:700 15px 'Noto Sans JP',sans-serif;cursor:pointer">🍽️ すべての店</button>
+<button onClick="{{ goAdd }}" style="flex:1;height:52px;border:1.5px solid #F4C3AE;border-radius:999px;background:#FFE8DC;color:#A8360F;font:700 15px 'Noto Sans JP',sans-serif;cursor:pointer">＋ お店を登録</button>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ isShop }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;display:flex;flex-direction:column">
+<div style="height:48px;flex:none;display:flex;align-items:center;padding:0 6px"><button onClick="{{ back }}" style="height:44px;padding:0 10px;border:0;background:transparent;color:#2A211B;font:500 15px 'Noto Sans JP',sans-serif;cursor:pointer;display:flex;align-items:center;gap:2px"><span style="font-size:24px;line-height:1">‹</span>{{ backLabel }}</button></div>
+<div class="la-scroll" style="flex:1;overflow-y:auto;padding:0 16px 24px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;padding:4px 0 4px">
+<div style="width:104px;height:104px;border-radius:50%;background:#fff;border:1px solid #EFE4D6;display:grid;place-items:center;font-size:58px">{{ sh.emoji }}</div>
+<div style="font:700 22px/1.35 'Zen Maru Gothic',sans-serif">{{ sh.name }}</div>
+<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px">
+<span style="flex:none;white-space:nowrap;font:500 13px/1 'Noto Sans JP',sans-serif;padding:7px 10px;border-radius:999px;background:#fff;border:1px solid #EFE4D6">{{ sh.genreLabel }}</span>
+<span style="flex:none;white-space:nowrap;font:500 13px/1 'Noto Sans JP',sans-serif;padding:7px 10px;border-radius:999px;background:#fff;border:1px solid #EFE4D6">🚶 徒歩{{ sh.walk }}</span>
+<span style="flex:none;white-space:nowrap;font:500 13px/1 'Noto Sans JP',sans-serif;padding:7px 10px;border-radius:999px;background:#fff;border:1px solid #EFE4D6">💴 {{ sh.budget }}</span>
+</div>
+</div>
+
+<sc-if value="{{ hasShopRecs }}">
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="font:700 15px 'Zen Maru Gothic',sans-serif">🙋 今日この店に行く人がいます</div>
+<sc-for list="{{ shopRecs }}" as="item" hint-placeholder-count="1">
+<div style="display:flex;flex-direction:column;gap:8px;padding:12px 12px 12px 14px;background:{{ item.bg }};border:1.5px solid {{ item.bd }};border-radius:16px;opacity:{{ item.op }}">
+<sc-if value="{{ item.isMine }}"><div style="align-self:flex-start;font:700 11px/1 'Noto Sans JP',sans-serif;color:#A8360F;background:#FFE8DC;padding:5px 9px;border-radius:999px">あなたの募集</div></sc-if>
+<div style="display:flex;align-items:center;gap:12px">
+<div style="width:50px;flex:none;display:flex;flex-direction:column;align-items:center"><div style="font:700 19px/1.1 'Zen Maru Gothic',sans-serif;text-decoration:{{ item.timeDeco }}">{{ item.time }}</div><div style="font:500 11px/1.5 'Noto Sans JP',sans-serif;color:#6B5E54">出発</div></div>
+<div style="width:1px;align-self:stretch;background:#EFE4D6"></div>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px"><div style="display:flex;align-items:center;gap:6px;font:700 14px/1.3 'Noto Sans JP',sans-serif"><span style="width:24px;height:24px;flex:none;border-radius:50%;background:#FFF1E0;display:grid;place-items:center;font-size:14px">{{ item.hostIcon }}</span>{{ item.hostName }}の募集</div><div style="font:400 12px/1.3 'Noto Sans JP',sans-serif;color:#6B5E54">{{ item.place }}集合</div><div style="font:700 12px/1.3 'Noto Sans JP',sans-serif">{{ item.countText }}</div></div>
+<sc-if value="{{ item.isOpen }}"><button onClick="{{ item.join }}" style="flex:none;min-width:88px;height:44px;padding:0 14px;border:0;border-radius:999px;background:#D9481F;color:#fff;font:700 14px 'Noto Sans JP',sans-serif;cursor:pointer">参加する</button></sc-if>
+<sc-if value="{{ item.isJoined }}"><button onClick="{{ item.join }}" style="flex:none;min-width:88px;height:44px;padding:0 12px;border:1.5px solid #9FD3AE;border-radius:999px;background:#E2F3E6;color:#22703C;font:700 14px 'Noto Sans JP',sans-serif;cursor:pointer">参加中 ✓</button></sc-if>
+<sc-if value="{{ item.isMine }}"><button onClick="{{ item.cancel }}" style="flex:none;min-width:88px;height:44px;padding:0 12px;border:1.5px solid #E3D6C6;border-radius:999px;background:#fff;color:#C8302B;font:700 14px 'Noto Sans JP',sans-serif;cursor:pointer">取り消す</button></sc-if>
+</div>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<div style="background:#fff;border:1px solid #EFE4D6;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:center;gap:10px"><span style="width:36px;height:36px;border-radius:50%;background:#FFF1E0;display:grid;place-items:center;font-size:20px">{{ byIcon }}</span><div style="flex:1;font:700 14px 'Noto Sans JP',sans-serif">{{ byName }}が登録</div><span style="font:400 12px 'Noto Sans JP',sans-serif;color:#6B5E54">{{ sh.date }}</span></div>
+<sc-if value="{{ hasNote }}"><div style="font:400 15px/1.65 'Noto Sans JP',sans-serif;background:#FFF7EC;border-radius:4px 14px 14px 14px;padding:12px 14px;text-wrap:pretty">{{ sh.note }}</div></sc-if>
+<div style="display:flex;gap:8px">
+<sc-for list="{{ reactions }}" as="rx" hint-placeholder-count="2"><button onClick="{{ rx.toggle }}" style="height:36px;padding:0 12px;border-radius:999px;border:1.5px solid {{ rx.bd }};background:{{ rx.bg }};color:{{ rx.fg }};font:700 13px 'Noto Sans JP',sans-serif;cursor:pointer;display:flex;align-items:center;gap:6px">{{ rx.label }}<span style="font-weight:500">{{ rx.count }}</span></button></sc-for>
+</div>
+<sc-if value="{{ isMineShop }}">
+<div style="display:flex;align-items:center;gap:8px;border-top:1px solid #EFE4D6;padding-top:12px"><span style="flex:1;font:500 12px 'Noto Sans JP',sans-serif;color:#6B5E54">あなたが登録したお店です</span><button onClick="{{ editShop }}" style="height:36px;padding:0 14px;border:1.5px solid #E3D6C6;border-radius:999px;background:#fff;color:#2A211B;font:700 13px 'Noto Sans JP',sans-serif;cursor:pointer">編集</button><button onClick="{{ askDelete }}" style="height:36px;padding:0 14px;border:1.5px solid #F2C4C1;border-radius:999px;background:#fff;color:#C8302B;font:700 13px 'Noto Sans JP',sans-serif;cursor:pointer">削除</button></div>
+</sc-if>
+</div>
+
+<div style="background:#fff;border:1px solid #EFE4D6;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:baseline;gap:6px"><span style="font:700 14px 'Noto Sans JP',sans-serif">気になっている人</span><span style="font:700 20px 'Zen Maru Gothic',sans-serif;color:#7A5500">{{ likeCount }}</span><span style="font:700 13px 'Noto Sans JP',sans-serif;color:#7A5500">人</span></div>
+<sc-if value="{{ hasLikers }}"><div style="display:flex;align-items:center;padding-left:4px"><sc-for list="{{ likers }}" as="lk" hint-placeholder-count="4"><span style="width:38px;height:38px;margin-left:{{ lk.ml }};border-radius:50%;background:#FFF1E0;border:2.5px solid {{ lk.bd }};display:grid;place-items:center;font-size:20px;box-sizing:border-box">{{ lk.icon }}</span></sc-for><sc-if value="{{ likeMore }}"><span style="margin-left:8px;font:700 13px 'Noto Sans JP',sans-serif;color:#6B5E54">{{ likeMore }}</span></sc-if></div></sc-if>
+<sc-if value="{{ noLikers }}"><div style="font:400 13px 'Noto Sans JP',sans-serif;color:#6B5E54">まだいません。最初の「気になる」をどうぞ</div></sc-if>
+</div>
+</div>
+<div style="flex:none;display:flex;flex-direction:column;gap:8px;padding:12px 16px 28px;background:#fff;border-top:1px solid #EFE4D6">
+<div style="display:flex;gap:8px">
+<button onClick="{{ toggleLike }}" style="flex:1;height:48px;border-radius:999px;border:1.5px solid {{ likeBd }};background:{{ likeBg }};color:{{ likeFg }};font:700 15px 'Noto Sans JP',sans-serif;cursor:pointer">{{ likeLabel }}</button>
+<button onClick="{{ openMap }}" style="flex:1;height:48px;border-radius:999px;border:1.5px solid #E3D6C6;background:#fff;color:#2A211B;font:700 15px 'Noto Sans JP',sans-serif;cursor:pointer">📍 マップで開く</button>
+</div>
+<button onClick="{{ goRecruit }}" style="height:52px;border:0;border-radius:999px;background:#D9481F;color:#fff;font:700 16px 'Noto Sans JP',sans-serif;cursor:pointer">🙋 今日ここ行く</button>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isAdd }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;display:flex;flex-direction:column">
+<div style="height:48px;flex:none;display:flex;align-items:center;gap:2px;padding:0 6px"><button onClick="{{ back }}" style="width:44px;height:44px;border:0;background:transparent;color:#2A211B;font-size:26px;cursor:pointer">‹</button><div style="font:700 17px 'Zen Maru Gothic',sans-serif">お店を登録</div></div>
+<sc-if value="{{ addForm }}">
+<div class="la-scroll" style="flex:1;overflow-y:auto;padding:4px 16px 24px;display:flex;flex-direction:column;gap:22px">
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;align-items:center;gap:6px"><span style="font:700 15px 'Noto Sans JP',sans-serif">Googleマップのリンク</span><span style="font:700 11px/1 'Noto Sans JP',sans-serif;color:#A8360F;background:#FFE8DC;padding:4px 6px;border-radius:4px">必須</span></div>
+<div style="display:flex;gap:8px"><input value="{{ a.url }}" onChange="{{ onUrl }}" placeholder="https://maps.app.goo.gl/…" style="flex:1;min-width:0;height:48px;box-sizing:border-box;border:1.5px solid {{ urlBd }};border-radius:12px;padding:0 12px;font:400 14px 'Noto Sans JP',sans-serif;color:#2A211B;background:{{ urlBg }};outline:none"><button onClick="{{ paste }}" style="flex:none;white-space:nowrap;height:48px;padding:0 12px;border:1.5px solid #E3D6C6;border-radius:12px;background:#fff;color:#2A211B;font:700 14px 'Noto Sans JP',sans-serif;cursor:pointer">📋 貼り付け</button></div>
+<sc-if value="{{ urlErr }}"><div style="font:700 13px/1.5 'Noto Sans JP',sans-serif;color:#C8302B">⚠ Googleマップのリンクではないようです。Googleマップで店を開いてリンクをコピーしてください</div></sc-if>
+<div style="font:400 12px/1.6 'Noto Sans JP',sans-serif;color:#6B5E54">Googleマップで店を開き『共有』→『リンクをコピー』</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;align-items:center;gap:6px"><span style="font:700 15px 'Noto Sans JP',sans-serif">店名</span><span style="font:700 11px/1 'Noto Sans JP',sans-serif;color:#A8360F;background:#FFE8DC;padding:4px 6px;border-radius:4px">必須</span></div>
+<input value="{{ a.name }}" onChange="{{ onName }}" placeholder="例：麺処 しおかぜ" style="height:48px;box-sizing:border-box;border:1.5px solid {{ nameBd }};border-radius:12px;padding:0 14px;font:400 16px 'Noto Sans JP',sans-serif;color:#2A211B;background:#fff;outline:none">
+</div>
+<sc-if value="{{ dup }}">
+<div style="background:#FFF3D1;border:1.5px solid #E8A710;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px">
+<div style="font:700 14px/1.5 'Noto Sans JP',sans-serif;color:#5C4000">この店はすでに{{ dupBy }}さんが登録しています</div>
+<div style="display:flex;align-items:center;gap:10px;background:#fff;border-radius:12px;padding:10px 12px"><span style="font-size:26px">{{ dupEmoji }}</span><span style="flex:1;font:700 14px 'Noto Sans JP',sans-serif">{{ dupName }}</span></div>
+<button onClick="{{ openDup }}" style="height:44px;border:0;border-radius:999px;background:#2A211B;color:#fff;font:700 14px 'Noto Sans JP',sans-serif;cursor:pointer">店舗ページを見る ›</button>
+</div>
+</sc-if>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;align-items:center;gap:6px"><span style="font:700 15px 'Noto Sans JP',sans-serif">ジャンル</span><span style="font:700 11px/1 'Noto Sans JP',sans-serif;color:#A8360F;background:#FFE8DC;padding:4px 6px;border-radius:4px">必須</span></div>
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px"><sc-for list="{{ genreChips }}" as="c" hint-placeholder-count="5"><button onClick="{{ c.pick }}" style="height:64px;border-radius:12px;border:1.5px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;padding:0"><span style="font-size:24px;line-height:1.1">{{ c.e }}</span><span style="font:700 11px/1.3 'Noto Sans JP',sans-serif;text-align:center">{{ c.v }}</span></button></sc-for></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;align-items:center;gap:6px"><span style="font:700 15px 'Noto Sans JP',sans-serif">オフィスから徒歩</span><span style="font:700 11px/1 'Noto Sans JP',sans-serif;color:#A8360F;background:#FFE8DC;padding:4px 6px;border-radius:4px">必須</span></div>
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px"><sc-for list="{{ walkChips }}" as="c" hint-placeholder-count="3"><button onClick="{{ c.pick }}" style="height:44px;border-radius:12px;border:1.5px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font:700 14px 'Noto Sans JP',sans-serif;cursor:pointer">{{ c.v }}</button></sc-for></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;align-items:center;gap:6px"><span style="font:700 15px 'Noto Sans JP',sans-serif">予算</span><span style="font:700 11px/1 'Noto Sans JP',sans-serif;color:#A8360F;background:#FFE8DC;padding:4px 6px;border-radius:4px">必須</span></div>
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px"><sc-for list="{{ budgetChips }}" as="c" hint-placeholder-count="3"><button onClick="{{ c.pick }}" style="height:44px;border-radius:12px;border:1.5px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font:700 14px 'Noto Sans JP',sans-serif;cursor:pointer">{{ c.v }}</button></sc-for></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;align-items:center;gap:6px"><span style="font:700 15px 'Noto Sans JP',sans-serif">ひとこと</span><span style="font:700 11px/1 'Noto Sans JP',sans-serif;color:#6B5E54;background:#F1EBE3;padding:4px 6px;border-radius:4px">任意</span></div>
+<textarea value="{{ a.note }}" onChange="{{ onNote }}" rows="2" placeholder="例：つけ麺が濃厚でおすすめ" style="box-sizing:border-box;border:1.5px solid #E3D6C6;border-radius:12px;padding:12px 14px;font:400 15px/1.5 'Noto Sans JP',sans-serif;color:#2A211B;background:#fff;outline:none;resize:none"></textarea>
+</div>
+</div>
+<div style="flex:none;display:flex;flex-direction:column;gap:8px;padding:12px 16px 28px;background:#fff;border-top:1px solid #EFE4D6">
+<sc-if value="{{ canSubmit }}"><button onClick="{{ submitAdd }}" style="height:52px;border:0;border-radius:999px;background:#D9481F;color:#fff;font:700 16px 'Noto Sans JP',sans-serif;cursor:pointer">登録する</button></sc-if>
+<sc-if value="{{ cannotSubmit }}"><button disabled="{{ true }}" style="height:52px;border:0;border-radius:999px;background:#EDE6DD;color:#8A7D71;font:700 16px 'Noto Sans JP',sans-serif">登録する</button><div style="text-align:center;font:400 12px 'Noto Sans JP',sans-serif;color:#6B5E54">{{ submitHint }}</div></sc-if>
+</div>
+</sc-if>
+<sc-if value="{{ addDone }}">
+<div class="la-scroll" style="flex:1;overflow-y:auto;padding:32px 16px 24px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px">
+<div style="width:104px;height:104px;border-radius:50%;background:#E2F3E6;display:grid;place-items:center;font-size:56px">🌱</div>
+<div style="font:700 24px/1.3 'Zen Maru Gothic',sans-serif">登録しました！</div>
+<div style="font:400 14px/1.6 'Noto Sans JP',sans-serif;color:#6B5E54">みんなの店に、新しいたねが1つ増えました</div>
+<div style="align-self:stretch;display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #EFE4D6;border-radius:16px;padding:14px 16px;text-align:left;margin-top:6px"><span style="width:52px;height:52px;border-radius:50%;background:#FFF1E0;display:grid;place-items:center;font-size:28px">{{ ns.emoji }}</span><div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px"><span style="display:block;font:700 16px/1.4 'Noto Sans JP',sans-serif">{{ ns.name }}</span><span style="font:400 12px 'Noto Sans JP',sans-serif;color:#6B5E54">{{ ns.genre }} · 徒歩{{ ns.walk }} · {{ ns.budget }}</span></div></div>
+</div>
+<div style="flex:none;display:flex;flex-direction:column;gap:8px;padding:12px 16px 28px;background:#fff;border-top:1px solid #EFE4D6">
+<button onClick="{{ viewNew }}" style="height:52px;border:0;border-radius:999px;background:#D9481F;color:#fff;font:700 16px 'Noto Sans JP',sans-serif;cursor:pointer">店舗ページを見る</button>
+<button onClick="{{ addAgain }}" style="height:48px;border:1.5px solid #E3D6C6;border-radius:999px;background:#fff;color:#2A211B;font:700 15px 'Noto Sans JP',sans-serif;cursor:pointer">もう1店登録する</button>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ isRecruit }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;display:flex;flex-direction:column">
+<sc-if value="{{ recForm }}">
+<div style="height:48px;flex:none;display:flex;align-items:center;gap:2px;padding:0 6px"><button onClick="{{ back }}" style="width:44px;height:44px;border:0;background:transparent;color:#2A211B;font-size:26px;cursor:pointer">‹</button><div style="font:700 17px 'Zen Maru Gothic',sans-serif">今日ここ行く</div></div>
+<div class="la-scroll" style="flex:1;overflow-y:auto;padding:4px 16px 24px;display:flex;flex-direction:column;gap:22px">
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="font:700 15px 'Noto Sans JP',sans-serif">お店</div>
+<div style="display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #EFE4D6;border-radius:16px;padding:12px 14px"><span style="width:48px;height:48px;border-radius:50%;background:#FFF1E0;display:grid;place-items:center;font-size:26px">{{ sh.emoji }}</span><div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px"><span style="display:block;font:700 16px/1.4 'Noto Sans JP',sans-serif">{{ sh.name }}</span><span style="font:400 12px 'Noto Sans JP',sans-serif;color:#6B5E54">徒歩{{ sh.walk }} · {{ sh.budget }}</span></div></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;align-items:center;gap:6px"><span style="font:700 15px 'Noto Sans JP',sans-serif">出発時間</span><span style="font:700 11px/1 'Noto Sans JP',sans-serif;color:#A8360F;background:#FFE8DC;padding:4px 6px;border-radius:4px">必須</span><span style="margin-left:auto;font:400 12px 'Noto Sans JP',sans-serif;color:#6B5E54">いま 12:05</span></div>
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px"><sc-for list="{{ timeChips }}" as="c" hint-placeholder-count="6"><button onClick="{{ c.pick }}" disabled="{{ c.dis }}" style="height:52px;border-radius:12px;border:1.5px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:0"><span style="font:700 17px/1.2 'Zen Maru Gothic',sans-serif;text-decoration:{{ c.deco }}">{{ c.t }}</span><sc-if value="{{ c.dis }}"><span style="font:500 10px/1.2 'Noto Sans JP',sans-serif">過ぎました</span></sc-if></button></sc-for></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;align-items:center;gap:6px"><span style="font:700 15px 'Noto Sans JP',sans-serif">集合場所</span><span style="font:700 11px/1 'Noto Sans JP',sans-serif;color:#A8360F;background:#FFE8DC;padding:4px 6px;border-radius:4px">必須</span></div>
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px"><sc-for list="{{ placeChips }}" as="c" hint-placeholder-count="4"><button onClick="{{ c.pick }}" style="height:52px;border-radius:12px;border:1.5px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font:700 15px 'Noto Sans JP',sans-serif;cursor:pointer">{{ c.e }} {{ c.v }}</button></sc-for></div>
+<sc-if value="{{ placeIsOther }}"><input value="{{ r.placeOther }}" onChange="{{ onPlaceOther }}" placeholder="例：虎ノ門ヒルズ駅 A1出口" style="height:48px;box-sizing:border-box;border:1.5px solid #D9481F;border-radius:12px;padding:0 14px;font:400 15px 'Noto Sans JP',sans-serif;color:#2A211B;background:#fff;outline:none"></sc-if>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;align-items:center;gap:6px"><span style="font:700 15px 'Noto Sans JP',sans-serif">ひとこと</span><span style="font:700 11px/1 'Noto Sans JP',sans-serif;color:#6B5E54;background:#F1EBE3;padding:4px 6px;border-radius:4px">任意</span></div>
+<input value="{{ r.note }}" onChange="{{ onRecNote }}" placeholder="例：さくっと食べて戻ります" style="height:48px;box-sizing:border-box;border:1.5px solid #E3D6C6;border-radius:12px;padding:0 14px;font:400 15px 'Noto Sans JP',sans-serif;color:#2A211B;background:#fff;outline:none">
+</div>
+</div>
+<div style="flex:none;display:flex;flex-direction:column;gap:8px;padding:12px 16px 28px;background:#fff;border-top:1px solid #EFE4D6">
+<sc-if value="{{ canRec }}"><button onClick="{{ submitRec }}" style="height:52px;border:0;border-radius:999px;background:#D9481F;color:#fff;font:700 16px 'Noto Sans JP',sans-serif;cursor:pointer">この内容で募集する</button></sc-if>
+<sc-if value="{{ cannotRec }}"><button disabled="{{ true }}" style="height:52px;border:0;border-radius:999px;background:#EDE6DD;color:#8A7D71;font:700 16px 'Noto Sans JP',sans-serif">この内容で募集する</button><div style="text-align:center;font:400 12px 'Noto Sans JP',sans-serif;color:#6B5E54">{{ recHint }}</div></sc-if>
+</div>
+</sc-if>
+<sc-if value="{{ recDone }}">
+<div class="la-scroll" style="flex:1;overflow-y:auto;padding:40px 16px 24px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px">
+<div style="width:104px;height:104px;border-radius:50%;background:#FFE8DC;display:grid;place-items:center;font-size:56px">🙌</div>
+<div style="font:700 24px/1.3 'Zen Maru Gothic',sans-serif">募集しました！</div>
+<div style="align-self:stretch;display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #EFE4D6;border-radius:16px;padding:14px 16px;text-align:left;margin-top:6px"><div style="width:56px;flex:none;display:flex;flex-direction:column;align-items:center"><span style="font:700 20px/1.1 'Zen Maru Gothic',sans-serif">{{ r.time }}</span><span style="font:500 11px 'Noto Sans JP',sans-serif;color:#6B5E54">出発</span></div><div style="width:1px;align-self:stretch;background:#EFE4D6"></div><div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px"><span style="display:block;font:700 15px/1.4 'Noto Sans JP',sans-serif">{{ sh.emoji }} {{ sh.name }}</span><span style="display:block;font:400 12px/1.4 'Noto Sans JP',sans-serif;color:#6B5E54">{{ recPlace }}集合</span></div></div>
+<div style="align-self:stretch;display:flex;flex-direction:column;gap:10px;background:#FFF3D1;border-radius:16px;padding:14px 16px;text-align:left">
+<div style="display:flex;align-items:center"><sc-for list="{{ likers }}" as="lk" hint-placeholder-count="4"><span style="width:32px;height:32px;margin-left:{{ lk.ml }};border-radius:50%;background:#FFF1E0;border:2px solid #FFF3D1;display:grid;place-items:center;font-size:17px;box-sizing:border-box">{{ lk.icon }}</span></sc-for></div>
+<div style="font:500 14px/1.6 'Noto Sans JP',sans-serif;color:#5C4000;text-wrap:pretty">この店を『気になる』にしている人のホームで目立って表示されます</div>
+</div>
+</div>
+<div style="flex:none;padding:12px 16px 28px;background:#fff;border-top:1px solid #EFE4D6;display:flex;flex-direction:column"><button onClick="{{ recHome }}" style="height:52px;border:0;border-radius:999px;background:#D9481F;color:#fff;font:700 16px 'Noto Sans JP',sans-serif;cursor:pointer">ホームで確認する</button></div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ isList }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;display:flex;flex-direction:column">
+<div style="height:48px;flex:none;display:flex;align-items:center;gap:2px;padding:0 6px"><button onClick="{{ back }}" style="width:44px;height:44px;border:0;background:transparent;color:#2A211B;font-size:26px;cursor:pointer">‹</button><div style="font:700 17px 'Zen Maru Gothic',sans-serif">みんなの店</div></div>
+<div style="flex:none;display:flex;flex-direction:column;gap:8px;padding:4px 0 12px;border-bottom:1px solid #EFE4D6">
+<sc-for list="{{ filterGroups }}" as="g" hint-placeholder-count="3">
+<div style="display:flex;align-items:center;gap:8px;padding-left:16px"><span style="flex:none;width:52px;font:700 12px 'Noto Sans JP',sans-serif;color:#6B5E54">{{ g.label }}</span><div class="la-scroll" style="display:flex;gap:6px;overflow-x:auto;padding-right:16px"><sc-for list="{{ g.chips }}" as="c" hint-placeholder-count="3"><button onClick="{{ c.click }}" style="flex:none;height:36px;padding:0 12px;border-radius:999px;border:1.5px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font:700 13px 'Noto Sans JP',sans-serif;cursor:pointer;white-space:nowrap">{{ c.label }}</button></sc-for></div></div>
+</sc-for>
+<div style="display:flex;align-items:center;padding:4px 16px 0;min-height:32px"><span style="font:700 14px 'Noto Sans JP',sans-serif">{{ listCount }}件</span><sc-if value="{{ filterActive }}"><span style="font:400 12px 'Noto Sans JP',sans-serif;color:#6B5E54;margin-left:6px">（全{{ totalCount }}件中）</span><button onClick="{{ clearF }}" style="margin-left:auto;height:32px;padding:0 12px;border:0;border-radius:999px;background:#F1EBE3;color:#2A211B;font:700 12px 'Noto Sans JP',sans-serif;cursor:pointer">✕ 条件を解除</button></sc-if></div>
+</div>
+<div class="la-scroll" style="flex:1;overflow-y:auto;padding:12px 16px 32px">
+<sc-if value="{{ hasRows }}">
+<div style="background:#fff;border:1px solid #EFE4D6;border-radius:16px;overflow:hidden;display:flex;flex-direction:column">
+<sc-for list="{{ rows }}" as="row" hint-placeholder-count="6"><button onClick="{{ row.open }}" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:0;border-bottom:1px solid #F4ECE2;background:#fff;text-align:left;cursor:pointer;color:#2A211B"><span style="width:48px;height:48px;flex:none;border-radius:50%;background:#FFF1E0;display:grid;place-items:center;font-size:26px">{{ row.emoji }}</span><span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px"><span style="font:700 15px 'Noto Sans JP',sans-serif">{{ row.name }}</span><span style="font:400 12px 'Noto Sans JP',sans-serif;color:#6B5E54">{{ row.meta }}</span></span><span style="font-size:20px;color:#B5A99D">›</span></button></sc-for>
+</div>
+</sc-if>
+<sc-if value="{{ noRows }}">
+<div style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:48px 8px">
+<div style="font-size:44px">🔍</div>
+<div style="font:700 17px/1.4 'Zen Maru Gothic',sans-serif">条件に合うお店がありません</div>
+<div style="font:400 13px/1.6 'Noto Sans JP',sans-serif;color:#6B5E54">条件を減らすか、あなたの知っているお店を登録してください</div>
+<div style="display:flex;gap:8px;margin-top:14px;align-self:stretch"><button onClick="{{ clearF }}" style="flex:1;height:48px;border:1.5px solid #E3D6C6;border-radius:999px;background:#fff;color:#2A211B;font:700 14px 'Noto Sans JP',sans-serif;cursor:pointer">絞り込みを解除</button><button onClick="{{ goAdd }}" style="flex:1;height:48px;border:1.5px solid #F4C3AE;border-radius:999px;background:#FFE8DC;color:#A8360F;font:700 14px 'Noto Sans JP',sans-serif;cursor:pointer">＋ お店を登録</button></div>
+</div>
+</sc-if>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ toast }}">
+<div style="position:absolute;left:16px;right:16px;bottom:{{ toastBottom }};display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:14px;background:{{ toastBg }};color:#fff;font:500 14px/1.5 'Noto Sans JP',sans-serif;box-shadow:0 8px 24px rgba(42,33,27,.25);z-index:5"><span style="flex:none;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center;font:700 12px sans-serif">{{ toastIcon }}</span><span>{{ toast }}</span></div>
+</sc-if>
+
+<sc-if value="{{ modalOpen }}">
+<div style="position:absolute;inset:0;background:rgba(42,33,27,.5);display:flex;align-items:center;justify-content:center;padding:24px;z-index:6">
+<div style="width:100%;background:#fff;border-radius:20px;padding:24px 20px 20px;display:flex;flex-direction:column;gap:10px;text-align:center">
+<div style="font-size:36px">{{ modalIcon }}</div>
+<div style="font:700 18px/1.4 'Zen Maru Gothic',sans-serif">{{ modalTitle }}</div>
+<div style="font:400 14px/1.65 'Noto Sans JP',sans-serif;color:#6B5E54;text-wrap:pretty">{{ modalBody }}</div>
+<button onClick="{{ modalOk }}" style="margin-top:10px;height:52px;border:0;border-radius:999px;background:#C8302B;color:#fff;font:700 16px 'Noto Sans JP',sans-serif;cursor:pointer">{{ modalOkLabel }}</button>
+<button onClick="{{ modalCancel }}" style="height:48px;border:1.5px solid #E3D6C6;border-radius:999px;background:#fff;color:#2A211B;font:700 15px 'Noto Sans JP',sans-serif;cursor:pointer">やめる</button>
+</div>
+</div>
+</sc-if>
+
+</div>
+</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:391,&quot;height&quot;:828},&quot;variant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;home-multi&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;live&quot;,&quot;reg-boot&quot;,&quot;reg-empty&quot;,&quot;reg-kb&quot;,&quot;reg-filled&quot;,&quot;reg-error&quot;,&quot;home-one&quot;,&quot;home-multi&quot;,&quot;home-many&quot;,&quot;home-many-open&quot;,&quot;home-no-recruit&quot;,&quot;home-no-shops&quot;,&quot;home-loading&quot;,&quot;home-error&quot;,&quot;shop-normal&quot;,&quot;shop-liked&quot;,&quot;shop-recruit&quot;,&quot;shop-mine&quot;,&quot;shop-delete&quot;,&quot;add-empty&quot;,&quot;add-filled&quot;,&quot;add-url-error&quot;,&quot;add-dup&quot;,&quot;add-done&quot;,&quot;add-fail&quot;,&quot;rec-create&quot;,&quot;rec-done&quot;,&quot;rec-joined&quot;,&quot;rec-cancel&quot;,&quot;list-normal&quot;,&quot;list-filtered&quot;,&quot;list-none&quot;,&quot;cards&quot;]}}">
+const P={sato:{name:'佐藤',icon:'🐳'},suzuki:{name:'鈴木',icon:'⚽'},yamamoto:{name:'山本',icon:'🌻'},takahashi:{name:'高橋',icon:'🐙'},ito:{name:'伊藤',icon:'🌿'},watanabe:{name:'渡辺',icon:'🦊'},nakamura:{name:'中村',icon:'🍵'},kobayashi:{name:'小林',icon:'🐻'},kato:{name:'加藤',icon:'🎸'},yoshida:{name:'吉田',icon:'🐼'}};
+const SHOPS=[
+{id:'s1',emoji:'🍜',name:'麺処 しおかぜ',genre:'ラーメン',walk:'5分以内',budget:'〜1,000円',by:'sato',date:'9/12に登録',note:'つけ麺が濃厚でおすすめ。11:45前なら並ばずに入れます',likes:['kato','ito','yoshida'],url:'https://maps.app.goo.gl/shiokaze'},
+{id:'s2',emoji:'🍱',name:'定食屋 こまち',genre:'和食',walk:'5分以内',budget:'〜1,000円',by:'suzuki',date:'9/10に登録',note:'日替わりの焼き魚定食がうまい。ご飯おかわり自由',likes:['nakamura','sato']},
+{id:'s3',emoji:'🍛',name:'スパイス食堂 ナナ',genre:'カレー',walk:'10分以内',budget:'〜1,500円',by:'yamamoto',date:'9/18に登録',note:'あいがけが最高。辛さは3段階から選べます',likes:['watanabe','kobayashi','kato','yoshida']},
+{id:'s4',emoji:'🍣',name:'すし処 まる寿',genre:'寿司・海鮮',walk:'10分以内',budget:'1,500円〜',by:'takahashi',date:'9/05に登録',note:'ランチの海鮮丼がこの値段でこの量',likes:['suzuki']},
+{id:'s5',emoji:'🥗',name:'グリーンボウル虎ノ門',genre:'その他',walk:'5分以内',budget:'〜1,500円',by:'ito',date:'9/20に登録',note:'野菜たっぷりで午後眠くならない',likes:['yamamoto','nakamura']},
+{id:'s6',emoji:'🍜',name:'中華そば 灯',genre:'ラーメン',walk:'10分以上',budget:'〜1,000円',by:'watanabe',date:'8/29に登録',note:'少し歩くけど、澄んだ醤油スープが絶品',likes:['sato','takahashi','kato']},
+{id:'s7',emoji:'🍱',name:'おばんざい 小春',genre:'和食',walk:'10分以内',budget:'〜1,500円',by:'nakamura',date:'9/02に登録',note:'小鉢が選べる。落ち着いて話せる店',likes:['ito']},
+{id:'s8',emoji:'🍛',name:'カレーの森',genre:'カレー',walk:'5分以内',budget:'〜1,000円',by:'me',date:'9/24に登録',note:'キーマカレーが安くて早い',likes:['kobayashi','suzuki']}];
+const RECRUITS=[
+{id:'r1',shop:'s1',host:'sato',time:'12:15',place:'1階ロビー',count:2},
+{id:'r2',shop:'s3',host:'yamamoto',time:'12:30',place:'8階エレベーター前',count:3},
+{id:'r3',shop:'s2',host:'suzuki',time:'12:30',place:'1階ロビー',count:1},
+{id:'r4',shop:'s5',host:'ito',time:'13:00',place:'1階ロビー',count:2},
+{id:'r5',shop:'s4',host:'takahashi',time:'13:00',place:'8階エレベーター前',count:1},
+{id:'rc',shop:'s7',host:'nakamura',time:'11:45',place:'1階ロビー',count:3}];
+const NOW='12:05';
+const TIMES=['12:00','12:15','12:30','12:45','13:00','13:15'];
+const PLACES=[{v:'1階ロビー',e:'🏢'},{v:'8階エレベーター前',e:'🛗'},{v:'現地',e:'📍'},{v:'その他',e:'✏️'}];
+const GENRES=[{v:'ラーメン',e:'🍜'},{v:'うどん・そば',e:'🥢'},{v:'寿司・海鮮',e:'🍣'},{v:'カレー',e:'🍛'},{v:'タイ料理',e:'🌶️'},{v:'和食',e:'🍱'},{v:'イタリアン',e:'🍝'},{v:'その他',e:'🍽️'}];
+const WALKS=['5分以内','10分以内','10分以上'];
+const BUDGETS=['〜1,000円','〜1,500円','1,500円〜'];
+const KB=['😀','😆','🥰','😎','🤓','🥳','😺','🐶','🐱','🐻','🐼','🐨','🐯','🦊','🐸','🐣','🐙','🐳','🦄','🐝','🌻','🌿','🍀','🌸','🍙','🍜','🍛','🍣','☕','⚽','🎸','🚀'];
+const URL_OK=/^https?:\/\/(maps\.app\.goo\.gl|goo\.gl\/maps|(www\.)?google\.(com|co\.jp)\/maps|maps\.google\.(com|co\.jp))/;
+const SAMPLE_URL='https://maps.app.goo.gl/Tk7pQe2';
+function oneEmoji(t){if(!t)return false;let n;try{n=[...new Intl.Segmenter('ja',{granularity:'grapheme'}).segment(t)].length}catch(e){n=[...t].length}return n===1&&/\p{Extended_Pictographic}/u.test(t)}
+function chip(on){return on?{bg:'#FFE8DC',bd:'#D9481F',fg:'#A8360F'}:{bg:'#fff',bd:'#E3D6C6',fg:'#2A211B'}}
+function blankAdd(){return {url:'',name:'',genre:null,walk:null,budget:null,note:'',done:false,failOnce:false,newId:null}}
+function preset(v){
+const s={screen:'home',from:'home',recruits:['r1'],expanded:false,loading:false,error:false,noShops:false,joined:[],mine:null,liked:[],shopId:'s3',toast:null,toastKind:'ok',modal:null,reacts:[],deleted:[],extra:[],reg:{name:'',icon:'',kb:false},add:blankAdd(),rec:{time:null,place:null,note:'',done:false},filt:{walk:[],budget:[],genre:[]},sheet:false,live:false};
+const multi=['r1','r2','r3'],all=['r1','r2','r3','r4','r5'];
+const filled={url:SAMPLE_URL,name:'そば処 たけ',genre:'うどん・そば',walk:'5分以内',budget:'〜1,000円',note:'冷たい肉そばが絶品'};
+switch(v){
+case 'live':s.screen='boot';s.live=true;s.recruits=multi;s.liked=['s1'];break;
+case 'reg-boot':s.screen='boot';break;
+case 'reg-empty':s.screen='reg';break;
+case 'reg-kb':s.screen='reg';s.reg={name:'',icon:'',kb:true};break;
+case 'reg-filled':s.screen='reg';s.reg={name:'田中',icon:'🐣',kb:false};break;
+case 'reg-error':s.screen='reg';s.reg={name:'田中',icon:'🐣🍙',kb:false};break;
+case 'home-multi':s.recruits=multi;s.liked=['s1'];break;
+case 'home-many':s.recruits=all;break;
+case 'home-many-open':s.recruits=all;s.expanded=true;break;
+case 'home-no-recruit':s.recruits=[];break;
+case 'home-no-shops':s.recruits=[];s.noShops=true;break;
+case 'home-loading':s.loading=true;break;
+case 'home-error':s.error=true;break;
+case 'shop-normal':s.screen='shop';break;
+case 'shop-liked':s.screen='shop';s.liked=['s3'];s.toast='「気になる」に追加しました';break;
+case 'shop-recruit':s.screen='shop';s.shopId='s1';break;
+case 'shop-mine':s.screen='shop';s.shopId='s8';break;
+case 'shop-delete':s.screen='shop';s.shopId='s8';s.modal='delete';break;
+case 'add-empty':s.screen='add';break;
+case 'add-filled':s.screen='add';Object.assign(s.add,filled);break;
+case 'add-url-error':s.screen='add';Object.assign(s.add,{url:'https://tabelog.com/tokyo/A1308/13012345/',name:'そば処 たけ'});break;
+case 'add-dup':s.screen='add';Object.assign(s.add,{url:'https://maps.app.goo.gl/shiokaze',name:'麺処 しおかぜ',genre:'ラーメン'});break;
+case 'add-done':s.screen='add';s.extra=[{id:'sx',emoji:'🥢',name:'そば処 たけ',genre:'うどん・そば',walk:'5分以内',budget:'〜1,000円',by:'me',date:'9/28に登録',note:'冷たい肉そばが絶品',likes:[],url:SAMPLE_URL}];Object.assign(s.add,filled,{done:true,newId:'sx'});break;
+case 'add-fail':s.screen='add';Object.assign(s.add,filled);s.toast='通信エラーで登録できませんでした。入力内容はそのまま残っています';s.toastKind='err';break;
+case 'rec-create':s.screen='recruit';s.from='shop';s.rec={time:'12:30',place:null,note:'',done:false};break;
+case 'rec-done':s.screen='recruit';s.from='shop';s.rec={time:'12:30',place:'1階ロビー',note:'',done:true};break;
+case 'rec-joined':s.recruits=multi;s.joined=['r1'];s.toast='参加しました。12:15に1階ロビー集合です';break;
+case 'rec-cancel':s.recruits=multi;s.mine={id:'rm',shop:'s3',host:'me',time:'12:30',place:'1階ロビー',count:1};s.modal='cancelRecruit';break;
+case 'list-normal':s.screen='list';break;
+case 'list-filtered':s.screen='list';s.filt.walk=['5分以内'];break;
+case 'list-none':s.screen='list';s.filt.walk=['5分以内'];s.filt.genre=['寿司・海鮮'];break;
+case 'cards':s.sheet=true;s.joined=['r1'];s.liked=['s5'];s.mine={id:'rm',shop:'s3',host:'me',time:'12:30',place:'1階ロビー',count:1};break;
+}
+return s}
+class Component extends DCLogic{
+constructor(props){super(props);this.state=preset(props.variant||'home-multi')}
+componentDidMount(){if(this.state.live)this.bootT=setTimeout(()=>this.setState({screen:'reg'}),1600)}
+componentDidUpdate(pp){if(pp.variant!==this.props.variant)this.setState(preset(this.props.variant))}
+componentWillUnmount(){clearTimeout(this.bootT);clearTimeout(this.tT)}
+toastMsg(msg,kind){clearTimeout(this.tT);this.setState({toast:msg,toastKind:kind||'ok'});this.tT=setTimeout(()=>this.setState({toast:null}),2800)}
+allShops(){const s=this.state;return SHOPS.concat(s.extra).filter(x=>!s.deleted.includes(x.id))}
+shops(){return this.state.noShops?[]:this.allShops()}
+shop(id){return SHOPS.concat(this.state.extra).find(x=>x.id===id)}
+me(){const r=this.state.reg;return {name:(r.name||'').trim()||'田中',icon:oneEmoji(r.icon)?r.icon:'🐣'}}
+person(k){return k==='me'?this.me():P[k]}
+upd(key,patch){this.setState(s=>({[key]:{...s[key],...patch}}))}
+openShop(id){this.setState(s=>({screen:'shop',shopId:id,from:s.screen==='list'?'list':'home',toast:null,modal:null}))}
+join(r){const s=this.state;if(s.joined.includes(r.id)){this.setState({joined:s.joined.filter(x=>x!==r.id)});this.toastMsg('参加を取り消しました')}else{this.setState({joined:[...s.joined,r.id]});this.toastMsg(`参加しました。${r.time}に${r.place}集合です`)}}
+recs(){const s=this.state;const ids=new Set(this.shops().map(x=>x.id));let l=s.recruits.map(id=>RECRUITS.find(r=>r.id===id));if(s.mine)l=[s.mine,...l];return l.filter(r=>ids.has(r.shop)).sort((a,b)=>a.time.localeCompare(b.time))}
+card(r,stateLabel){const s=this.state,sh=this.shop(r.shop),host=this.person(r.host);const mine=r.host==='me',closed=r.time<NOW,joined=s.joined.includes(r.id)&&!mine&&!closed;const liked=!mine&&!closed&&s.liked.includes(r.shop);
+return {stateLabel,id:r.id,time:r.time,place:r.place,emoji:sh.emoji,shopName:sh.name,hostIcon:host.icon,hostName:mine?'あなた':host.name+'さん',countText:`${r.count+(joined?1:0)}人参加中`,isOpen:!mine&&!closed&&!joined,isJoined:joined,isMine:mine&&!closed,isClosed:closed,liked,
+bg:liked?'#FFFBEF':(joined?'#F4FBF5':'#FFFFFF'),bd:liked?'#E8A710':(joined?'#9FD3AE':'#EFE4D6'),op:closed?0.55:1,timeDeco:closed?'line-through':'none',
+open:()=>{if(!s.sheet)this.openShop(r.shop)},join:e=>{e.stopPropagation();this.join(r)},cancel:e=>{e.stopPropagation();this.setState({modal:'cancelRecruit'})},noop:e=>e.stopPropagation()}}
+renderVals(){
+const s=this.state,me=this.me(),shops=this.shops();
+const go=(screen,extra)=>this.setState({screen,toast:null,modal:null,...(extra||{})});
+const v={isSheet:s.sheet,inFrame:!s.sheet,isBoot:!s.sheet&&s.screen==='boot',isReg:s.screen==='reg',isHome:!s.sheet&&s.screen==='home',isShop:s.screen==='shop',isAdd:s.screen==='add',isRecruit:s.screen==='recruit',isList:s.screen==='list',meIcon:me.icon,meName:me.name};
+v.goAdd=()=>go('add',{add:blankAdd()});v.goList=()=>go('list');
+v.back=()=>{if(s.screen==='shop')go(s.from==='list'?'list':'home');else if(s.screen==='recruit')go('shop');else go('home')};
+if(s.sheet){v.sheetCards=[this.card(RECRUITS[2],'参加できる'),this.card(RECRUITS[0],'参加中'),this.card(s.mine,'自分の募集（「取り消す」）'),this.card(RECRUITS[5],'締め切り（出発時間を過ぎた）'),this.card(RECRUITS[3],'参加できる＋気になっている店（ハイライト）')];return v}
+// registration
+const r=s.reg,iconErr=!!r.icon&&!oneEmoji(r.icon);
+Object.assign(v,{regName:r.name,regIcon:r.icon,regIconEmpty:!r.icon,regIconFilled:!!r.icon,kbOpen:r.kb,iconErr,iconFont:iconErr?'34px':'52px',
+iconBorder:r.kb?'2.5px solid #D9481F':(iconErr?'2.5px solid #C8302B':(r.icon?'2px solid #EFE4D6':'2px dashed #F0A58A')),iconBg:r.kb?'#FFE8DC':(iconErr?'#FDE8E6':(r.icon?'#FFF1E0':'#FFF7EC')),
+regDisplay:(r.name.trim()||'')+'さん',openKb:()=>this.upd('reg',{kb:true}),closeKb:()=>this.upd('reg',{kb:false}),onRegName:e=>this.upd('reg',{name:e.target.value}),
+kbEmojis:KB.map(e=>({e,pick:()=>this.upd('reg',{icon:e,kb:false})}))});
+v.canStart=!!r.name.trim()&&!!r.icon&&!iconErr;v.cannotStart=!v.canStart;v.startApp=()=>go('home');
+// home
+const recs=this.recs(),cards=recs.map(x=>this.card(x));
+Object.assign(v,{homeLoading:s.loading,homeError:!s.loading&&s.error,homeNoShops:!s.loading&&!s.error&&shops.length===0,homeReady:!s.loading&&!s.error&&shops.length>0});
+v.showHomeBar=v.homeReady;
+const recIds=['s1','s3','s5'].filter(id=>shops.some(x=>x.id===id));const recShops=(recIds.length===3?recIds.map(id=>this.shop(id)):shops.slice(0,3));
+v.recommend=recShops.map(x=>({emoji:x.emoji,name:x.name,open:()=>this.openShop(x.id)}));
+v.recruitCards=s.expanded?cards:cards.slice(0,3);v.moreCount=Math.max(0,cards.length-3);v.showMore=!s.expanded&&v.moreCount>0;v.showClose=s.expanded&&cards.length>3;
+v.hasRecruits=cards.length>0;v.noRecruits=!cards.length;v.recruitCount=cards.length;
+v.expand=()=>this.setState({expanded:true});v.collapse=()=>this.setState({expanded:false});
+v.retry=()=>{this.setState({error:false,loading:true});setTimeout(()=>this.setState({loading:false}),900)};
+// shop
+const sh=this.shop(s.shopId)||SHOPS[0],by=this.person(sh.by),liked=s.liked.includes(sh.id);
+const lk=liked?['me',...sh.likes]:sh.likes;
+v.sh={...sh,genreLabel:(GENRES.find(g=>g.v===sh.genre)||{e:'🍽️'}).e+' '+sh.genre};
+v.byIcon=by.icon;v.byName=sh.by==='me'?'あなた':by.name+'さん';v.hasNote=!!sh.note;v.isMineShop=sh.by==='me';
+v.likers=lk.slice(0,7).map((k,i)=>({icon:this.person(k).icon,bd:k==='me'?'#E8A710':'#FFFFFF',ml:i?'-10px':'0px'}));
+v.likeMore=lk.length>7?`ほか${lk.length-7}人`:'';v.likeCount=lk.length;v.hasLikers=lk.length>0;v.noLikers=!lk.length;
+v.backLabel=s.from==='list'?'みんなの店':'ホーム';
+v.reactions=[['a','😋 気になる！',Math.max(1,sh.likes.length-1)]].map(([k,label,base])=>{const on=s.reacts.includes(sh.id+k),c=chip(on);return {label,count:base+(on?1:0),...c,bd:on?'#D9481F':'#EFE4D6',bg:on?'#FFE8DC':'#FFF7EC',toggle:()=>this.setState(st=>({reacts:on?st.reacts.filter(x=>x!==sh.id+k):[...st.reacts,sh.id+k]}))}});
+v.shopRecs=recs.filter(x=>x.shop===sh.id).map(x=>this.card(x));v.hasShopRecs=v.shopRecs.length>0;
+v.likeLabel=liked?'🌱 気になる ✓':'🌱 気になる';v.likeBg=liked?'#FFF3D1':'#fff';v.likeBd=liked?'#E8A710':'#E3D6C6';v.likeFg=liked?'#7A5500':'#2A211B';
+v.toggleLike=()=>{if(liked){this.setState({liked:s.liked.filter(x=>x!==sh.id)});this.toastMsg('「気になる」から外しました')}else{this.setState({liked:[...s.liked,sh.id]});this.toastMsg('「気になる」に追加しました')}};
+v.openMap=()=>this.toastMsg('Googleマップでお店を開きます');
+v.goRecruit=()=>go('recruit',{rec:{time:null,place:null,note:'',done:false}});
+v.editShop=()=>this.toastMsg('登録と同じ画面で内容を直せます');v.askDelete=()=>this.setState({modal:'delete'});
+// add
+const a=s.add,url=a.url.trim(),urlValid=URL_OK.test(url),urlErr=!!url&&!urlValid,nm=a.name.replace(/\s/g,'');
+const dupShop=a.done?null:this.allShops().find(x=>(x.url&&url&&x.url===url)||(nm&&x.name.replace(/\s/g,'')===nm));
+const missing=[urlValid,!!a.name.trim(),a.genre,a.walk,a.budget].filter(x=>!x).length;
+Object.assign(v,{a,addForm:!a.done,addDone:a.done,urlErr,urlBd:urlErr?'#C8302B':'#E3D6C6',urlBg:urlErr?'#FDE8E6':'#fff',nameBd:dupShop?'#E8A710':'#E3D6C6',dup:!!dupShop,dupBy:dupShop?this.person(dupShop.by).name:'',dupEmoji:dupShop?dupShop.emoji:'',dupName:dupShop?dupShop.name:'',openDup:()=>dupShop&&this.openShop(dupShop.id),
+canSubmit:missing===0&&!dupShop,submitHint:dupShop?'すでに登録されているお店です':(urlErr?'リンクを確認してください':`必須項目があと${missing}つです`),
+onUrl:e=>this.upd('add',{url:e.target.value}),onName:e=>this.upd('add',{name:e.target.value}),onNote:e=>this.upd('add',{note:e.target.value}),paste:()=>this.upd('add',{url:SAMPLE_URL}),
+genreChips:GENRES.map(g=>({...g,...chip(a.genre===g.v),pick:()=>this.upd('add',{genre:g.v})})),walkChips:WALKS.map(w=>({v:w,...chip(a.walk===w),pick:()=>this.upd('add',{walk:w})})),budgetChips:BUDGETS.map(b=>({v:b,...chip(a.budget===b),pick:()=>this.upd('add',{budget:b})}))});
+v.cannotSubmit=!v.canSubmit;
+v.submitAdd=()=>{if(!v.canSubmit)return;if(a.failOnce){this.upd('add',{failOnce:false});this.toastMsg('通信エラーで登録できませんでした。入力内容はそのまま残っています','err');return}
+const id='x'+Date.now(),g=GENRES.find(x=>x.v===a.genre);this.setState(st=>({toast:null,extra:[...st.extra,{id,emoji:g.e,name:a.name.trim(),genre:a.genre,walk:a.walk,budget:a.budget,by:'me',date:'9/28に登録',note:a.note.trim(),likes:[],url}],add:{...st.add,done:true,newId:id}}))};
+const ns=a.newId?this.shop(a.newId):null;v.ns=ns||{};v.viewNew=()=>ns&&this.setState({screen:'shop',shopId:ns.id,from:'home',toast:null});v.addAgain=()=>this.setState({add:blankAdd(),toast:null});
+// recruit
+const rc=s.rec;v.r=rc;v.recForm=!rc.done;v.recDone=rc.done;v.placeIsOther=rc.place==='その他';const placeName=v.placeIsOther?(rc.placeOther||'').trim():rc.place;v.recPlace=placeName;v.canRec=!!rc.time&&!!placeName;v.cannotRec=!v.canRec;v.recHint=v.placeIsOther&&rc.time?'集合場所を入力すると押せます':'出発時間と集合場所を選ぶと押せます';
+v.timeChips=TIMES.map(t=>{const dis=t<NOW,on=rc.time===t;return {t,dis,deco:dis?'line-through':'none',...(dis?{bg:'#F4EEE7',bd:'#F4EEE7',fg:'#8A7D71'}:chip(on)),pick:()=>!dis&&this.upd('rec',{time:t})}});
+v.placeChips=PLACES.map(p=>({...p,...chip(rc.place===p.v),pick:()=>this.upd('rec',{place:p.v})}));
+v.onRecNote=e=>this.upd('rec',{note:e.target.value});v.onPlaceOther=e=>this.upd('rec',{placeOther:e.target.value});
+v.submitRec=()=>this.setState({mine:{id:'rm',shop:sh.id,host:'me',time:rc.time,place:placeName,count:1},rec:{...rc,done:true}});
+v.recHome=()=>go('home',{rec:{time:null,place:null,note:'',done:false},expanded:false});
+if(s.screen==='recruit'&&rc.done)v.likers=sh.likes.slice(0,7).map((k,i)=>({icon:this.person(k).icon,ml:i?'-8px':'0px'}));
+// list
+const f=s.filt,tog=(g,val)=>this.setState(st=>({filt:{...st.filt,[g]:st.filt[g].includes(val)?st.filt[g].filter(x=>x!==val):[...st.filt[g],val]}}));
+const mk=(g,opts)=>opts.map(o=>{const val=typeof o==='string'?o:o.v,on=f[g].includes(val);return {label:(on?'✓ ':'')+(o.e?o.e+' ':'')+val,...chip(on),click:()=>tog(g,val)}});
+v.filterGroups=[{label:'徒歩',chips:mk('walk',WALKS)},{label:'予算',chips:mk('budget',BUDGETS)},{label:'ジャンル',chips:mk('genre',GENRES)}];
+const rows=shops.filter(x=>(!f.walk.length||f.walk.includes(x.walk))&&(!f.budget.length||f.budget.includes(x.budget))&&(!f.genre.length||f.genre.includes(x.genre)));
+v.rows=rows.map(x=>{const n=x.likes.length+(s.liked.includes(x.id)?1:0),p=this.person(x.by);return {emoji:x.emoji,name:x.name,meta:`徒歩${x.walk} · 🌱${n}人 · ${x.by==='me'?'あなた':p.name+'さん'}`,open:()=>this.openShop(x.id)}});
+v.listCount=rows.length;v.totalCount=shops.length;v.hasRows=rows.length>0;v.noRows=!rows.length;v.filterActive=f.walk.length+f.budget.length+f.genre.length>0;
+v.clearF=()=>this.setState({filt:{walk:[],budget:[],genre:[]}});
+// toast & modal
+v.toast=s.toast;v.toastBg=s.toastKind==='err'?'#C8302B':'#2A211B';v.toastIcon=s.toastKind==='err'?'!':'✓';
+v.toastBottom=({home:'96px',shop:'156px',add:a.done?'150px':'100px',recruit:'100px',reg:'100px'})[s.screen]||'24px';
+v.modalOpen=!!s.modal;
+if(s.modal==='delete')Object.assign(v,{modalIcon:'🗑️',modalTitle:'このお店を削除しますか？',modalBody:'この店の『気になる』と募集もすべて消えます。元に戻せません',modalOkLabel:'削除する',modalOk:()=>{this.setState({deleted:[...s.deleted,sh.id],modal:null,screen:'home'});this.toastMsg('お店を削除しました')}});
+else Object.assign(v,{modalIcon:'🙅',modalTitle:'募集を取り消しますか？',modalBody:'参加している人の「参加中」も消えます。元に戻せません',modalOkLabel:'取り消す',modalOk:()=>{this.setState({mine:null,modal:null});this.toastMsg('募集を取り消しました')}});
+v.modalCancel=()=>this.setState({modal:null});
+return v}}
+</script>
+</body>
+</html>
