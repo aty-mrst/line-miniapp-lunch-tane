@@ -8,7 +8,7 @@ import {
   ApiError, type Api, type DuplicateShop, type HomeData, type Me, type Person, type Recruit, type RecruitInput,
   type ShopDetail, type ShopFilter, type ShopInput, type ShopSummary,
 } from './types';
-import { pickRecommend, rankShops } from './recommend';
+import { myShopStats, pickRecommend, rankShops } from './recommend';
 
 type UserRow = { id: string; name: string; icon: string; image: string | null };
 type ShopRow = { id: string; name: string; genre: Genre; walk: Walk; budget: Budget; note: string; mapUrl: string; createdBy: string; createdAt: string };
@@ -180,7 +180,7 @@ export function createMockApi(opts: MockOptions = {}): Api {
           recommend = pickRecommend(all, `${jstDate(now())}|${ME_ID}`);
         }
         const list = activeRecruits().sort(sortRecruits).map(toRecruit).filter((r) => !r.closed);
-        return { recommend, ranking: rankShops(all), recruits: list, shopCount: shops.length, likedCount: all.filter((s) => s.liked).length };
+        return { recommend, ranking: rankShops(all), recruits: list, shopCount: shops.length, likedCount: all.filter((s) => s.liked).length, ...myShopStats(all) };
       }),
     listShops: (filter?: ShopFilter) =>
       gate('listShops', () => {

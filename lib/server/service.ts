@@ -7,7 +7,7 @@ import { BUDGETS, GENRES, MAX_RECRUITS_PER_DAY, PLACES, WALKS, genreEmoji, isDep
 import { now } from '../clock';
 import { isPast, jstDate } from '../time';
 import { isImageDataUrl, isMapUrl, isOneEmoji, nameKey } from '../validation';
-import { pickRecommend, rankShops } from '../api/recommend';
+import { myShopStats, pickRecommend, rankShops } from '../api/recommend';
 import { ApiError, type DuplicateShop, type HomeData, type Me, type Person, type Recruit, type ShopDetail, type ShopFilter, type ShopSummary } from '../api/types';
 
 /* ---------- 入力の検証（クライアントと同じルール） ---------- */
@@ -258,6 +258,7 @@ export async function getHome(lineUserId: string): Promise<HomeData> {
     recruits: list,
     shopCount: all.length,
     likedCount: all.filter((s) => s.liked).length,
+    ...myShopStats(all),
   };
 }
 

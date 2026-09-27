@@ -29,3 +29,14 @@ export function rankShops(all: ShopSummary[]): ShopSummary[] {
     .sort((a, b) => b.likeCount - a.likeCount || b.createdAt.localeCompare(a.createdAt))
     .slice(0, RANKING_SIZE);
 }
+
+/** 自分が登録した店に、ほかの人が付けた「気になる」の数（自分で付けた分は数えない） */
+export function receivedLikes(s: ShopSummary): number {
+  return s.likeCount - (s.liked ? 1 : 0);
+}
+
+/** 自分の店の数と、もらった「気になる」の合計 */
+export function myShopStats(all: ShopSummary[]) {
+  const mine = all.filter((s) => s.createdBy.isMe);
+  return { myShopCount: mine.length, receivedLikes: mine.reduce((n, s) => n + receivedLikes(s), 0) };
+}

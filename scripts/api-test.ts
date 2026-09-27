@@ -108,6 +108,13 @@ async function main() {
   const rk = hl.json.ranking as { id: string; likeCount: number }[];
   ok(rk.length <= 6 && rk.every((x, i) => x.likeCount > 0 && (i === 0 || rk[i - 1].likeCount >= x.likeCount)), 'ランキングは6件以内・気になる数の多い順');
   ok(hl.json.recommend.length <= 3, 'おすすめは最大3件');
+  // A の店（shopId と cafe）に B が気になる → もらった気になるは B の分だけ
+  await call(A, 'PUT', `/api/shops/${shopId}/interest`);
+  const ha0 = await call(A, 'GET', '/api/home');
+  ok(ha0.json.myShopCount === 2, '登録したお店の数が2（Aが登録した2店）');
+  ok(ha0.json.receivedLikes === 1, 'もらった気になるは、ほかの人の分だけ数える（自分で付けた分は除く）');
+  await call(A, 'DELETE', `/api/shops/${shopId}/interest`);
+  ok((await call(B, 'GET', '/api/home')).json.myShopCount === 0, '登録していない人は0店');
   await call(B, 'PUT', `/api/shops/${shopId}/reaction`);
   const d2 = await call(B, 'GET', `/api/shops/${shopId}`);
   ok(d2.json.reactionCount === 1 && d2.json.reacted, 'リアクションON');

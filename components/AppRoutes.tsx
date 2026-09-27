@@ -9,6 +9,7 @@ import { ShopFormScreen, type ShopFormInitial } from './screens/ShopFormScreen';
 import { RecruitScreen, type RecruitInitial } from './screens/RecruitScreen';
 import { ListScreen, type ListInitial } from './screens/ListScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
+import { MineScreen } from './screens/MineScreen';
 import { LikesScreen } from './screens/LikesScreen';
 
 /** 各画面に渡す「初期状態」（/dev/states でボードの各状態を再現するため） */
@@ -23,7 +24,7 @@ export type ScreenInitial = {
 
 /**
  * 起動時の判定（LIFF → /api/me）と、path → 画面の対応。
- * ルート：/ /me /likes /register /shops /shops/new /shops/[id] /shops/[id]/edit /shops/[id]/recruit
+ * ルート：/ /me /likes /mine /register /shops /shops/new /shops/[id] /shops/[id]/edit /shops/[id]/recruit
  */
 export function AppRoutes({ initial, bootDelay = 0, holdBoot = false }: { initial?: ScreenInitial; bootDelay?: number; holdBoot?: boolean }) {
   const { api, me, setMe } = useApp();
@@ -74,13 +75,14 @@ export function AppRoutes({ initial, bootDelay = 0, holdBoot = false }: { initia
   const seg = pathname.split('/').filter(Boolean);
 
   if (seg[0] === 'me') return <ProfileScreen />;
+  if (seg[0] === 'mine') return <MineScreen />;
   if (seg[0] === 'likes') return <LikesScreen />;
   if (seg[0] === 'shops') {
     if (seg.length === 1) return <ListScreen initial={initial?.list} />;
     if (seg[1] === 'new') return <ShopFormScreen initial={initial?.form} />;
     if (seg[2] === 'edit') return <ShopFormScreen key={`edit-${seg[1]}`} editId={seg[1]} initial={initial?.form} />;
     if (seg[2] === 'recruit') return <RecruitScreen key={`rec-${seg[1]}`} shopId={seg[1]} initial={initial?.recruit} />;
-    return <ShopScreen key={seg[1]} id={seg[1]} from={params.get('from') === 'list' ? 'list' : params.get('from') === 'likes' ? 'likes' : 'home'} initial={initial?.shop} />;
+    return <ShopScreen key={seg[1]} id={seg[1]} from={params.get('from') === 'list' ? 'list' : params.get('from') === 'likes' ? 'likes' : params.get('from') === 'mine' ? 'mine' : 'home'} initial={initial?.shop} />;
   }
   return <HomeScreen initial={initial?.home} />;
 }

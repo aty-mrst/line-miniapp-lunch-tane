@@ -49,6 +49,8 @@ export type HomeData = {
   recruits: Recruit[];
   shopCount: number;
   likedCount: number; // 自分が「気になる」にしている店の数
+  myShopCount: number; // 自分が登録した店の数
+  receivedLikes: number; // 自分が登録した店に、ほかの人が付けた「気になる」の合計
 };
 
 export type ShopInput = { mapUrl: string; name: string; genre: Genre; walk: Walk; budget: Budget; note: string };

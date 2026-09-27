@@ -117,13 +117,19 @@ const SECTIONS: { id: string; title: string; states: State[] }[] = [
   },
   {
     id: 's5',
-    title: '⑤ みんなの店（一覧）・気になる店',
+    title: '⑤ みんなの店（一覧）・気になる店・登録したお店',
     states: [
       { id: '5-1', label: '通常', path: '/shops' },
       { id: '5-2', label: '絞り込み中', path: '/shops', initial: { list: { filter: { walk: ['5分以内'] } } } },
       { id: '5-3', label: '該当なし', path: '/shops', initial: { list: { filter: { walk: ['5分以内'], genre: ['寿司・海鮮'] } } } },
       { id: '5-4', label: '気になる店', path: '/likes', mock: { liked: ['s1', 's3'] } },
       { id: '5-5', label: '気になる店がない', optional: true, path: '/likes', mock: { liked: [] } },
+      {
+        id: '5-6',
+        label: '登録したお店（追加）',
+        path: '/mine',
+        mock: { extraShops: [{ id: 'sx', name: 'そば処 たけ', genre: 'うどん・そば', walk: '5分以内', budget: '〜1,000円', note: '冷たい肉そばが絶品', mapUrl: 'https://maps.app.goo.gl/Tk7pQe2', createdAt: '2026-09-27' }] },
+      },
     ],
   },
 ];

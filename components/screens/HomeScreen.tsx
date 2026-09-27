@@ -60,15 +60,17 @@ export function HomeScreen({ initial }: { initial?: HomeInitial }) {
               <span className="inline-block">今日はどこ行く？</span>
             </div>
           </div>
-          <button
-            onClick={() => nav.push('/likes')}
-            aria-label={`気になる店 ${data?.likedCount ?? 0}件`}
-            className="flex h-11 flex-none cursor-pointer items-center gap-1 whitespace-nowrap rounded-full border-[1.5px] border-line-strong bg-white px-3 text-[13px] font-bold text-ink transition-transform duration-100 active:scale-[.97]"
-          >
-            <span aria-hidden>🌱</span>気になる
-            <span className="font-maru text-[15px] text-mustard-ink">{data?.likedCount ?? 0}</span>
-          </button>
         </div>
+
+        {data && !home.error && (
+          <MyStats
+            myShopCount={data.myShopCount}
+            receivedLikes={data.receivedLikes}
+            likedCount={data.likedCount}
+            onMine={() => nav.push('/mine')}
+            onLikes={() => nav.push('/likes')}
+          />
+        )}
 
         {home.loading && <HomeSkeleton />}
 
@@ -173,6 +175,43 @@ export function HomeScreen({ initial }: { initial?: HomeInitial }) {
       </Screen>
       {actions.dialog}
     </>
+  );
+}
+
+/** 「あなたのたね」：登録したお店・もらった🌱・気になる店 */
+function MyStats({ myShopCount, receivedLikes, likedCount, onMine, onLikes }: {
+  myShopCount: number; receivedLikes: number; likedCount: number; onMine: () => void; onLikes: () => void;
+}) {
+  const cell = 'flex min-h-[68px] flex-1 cursor-pointer flex-col items-center justify-center gap-0.5 border-0 bg-transparent px-1 py-2 text-ink transition-transform duration-100 active:scale-[.97]';
+  return (
+    <section className="-mt-2 flex flex-col gap-2 rounded-card border border-line bg-white px-2 pb-1 pt-3">
+      <div className="px-2 text-[12px] font-bold text-ink-2">あなたのたね</div>
+      <div className="flex items-stretch">
+        <button onClick={onMine} className={cell} aria-label={`登録したお店 ${myShopCount}店`}>
+          <span className="font-maru text-[22px] font-bold leading-none">
+            {myShopCount}
+            <span className="ml-0.5 text-[12px]">店</span>
+          </span>
+          <span className="text-[11px] font-bold text-ink-2">登録したお店</span>
+        </button>
+        <div className="my-2 w-px bg-line" />
+        <button onClick={onMine} className={cell} aria-label={`もらった気になる ${receivedLikes}`}>
+          <span className="flex items-center gap-1 font-maru text-[22px] font-bold leading-none text-mustard-ink">
+            <span className="text-[16px]">🌱</span>
+            {receivedLikes}
+          </span>
+          <span className="text-[11px] font-bold text-ink-2">もらった気になる</span>
+        </button>
+        <div className="my-2 w-px bg-line" />
+        <button onClick={onLikes} className={cell} aria-label={`気になる店 ${likedCount}件`}>
+          <span className="font-maru text-[22px] font-bold leading-none">
+            {likedCount}
+            <span className="ml-0.5 text-[12px]">店</span>
+          </span>
+          <span className="text-[11px] font-bold text-ink-2">気になる店</span>
+        </button>
+      </div>
+    </section>
   );
 }
 

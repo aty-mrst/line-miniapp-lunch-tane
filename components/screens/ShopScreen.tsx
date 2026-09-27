@@ -26,7 +26,7 @@ function applyLike(d: ShopDetail, on: boolean, me: Me | null): ShopDetail {
   };
 }
 
-export function ShopScreen({ id, from, initial }: { id: string; from: 'home' | 'list' | 'likes'; initial?: ShopInitial }) {
+export function ShopScreen({ id, from, initial }: { id: string; from: 'home' | 'list' | 'likes' | 'mine'; initial?: ShopInitial }) {
   const { api, me } = useApp();
   const nav = useNav();
   const toast = useToast();
@@ -39,7 +39,7 @@ export function ShopScreen({ id, from, initial }: { id: string; from: 'home' | '
   const ready = !shop.loading && !shop.error && !!d;
   const notFound = shop.error instanceof ApiError && shop.error.status === 404;
 
-  const back = () => nav.push(from === 'list' ? '/shops' : from === 'likes' ? '/likes' : '/');
+  const back = () => nav.push(from === 'list' ? '/shops' : from === 'likes' ? '/likes' : from === 'mine' ? '/mine' : '/');
 
   const toggleLike = async () => {
     if (!d) return;
@@ -72,7 +72,7 @@ export function ShopScreen({ id, from, initial }: { id: string; from: 'home' | '
   return (
     <>
       <Screen
-        header={<ScreenHeader backLabel={from === 'list' ? 'みんなの店' : from === 'likes' ? '気になる店' : 'ホーム'} onBack={back} />}
+        header={<ScreenHeader backLabel={from === 'list' ? 'みんなの店' : from === 'likes' ? '気になる店' : from === 'mine' ? '登録したお店' : 'ホーム'} onBack={back} />}
         scrollClassName="gap-4 px-4 pb-6"
         bar={
           ready ? (
