@@ -8,6 +8,7 @@ import {
   ApiError, type Api, type DuplicateShop, type HomeData, type Me, type Person, type Recruit, type RecruitInput,
   type ShopDetail, type ShopFilter, type ShopInput, type ShopSummary,
 } from './types';
+import { pickRecommend } from './recommend';
 
 type UserRow = { id: string; name: string; icon: string };
 type ShopRow = { id: string; name: string; genre: Genre; walk: Walk; budget: Budget; note: string; mapUrl: string; createdBy: string; createdAt: string };
@@ -41,7 +42,7 @@ const ME_ID = 'me';
 
 export function createMockApi(opts: MockOptions = {}): Api {
   const latency = opts.latency ?? 150;
-  const fixedNow = opts.now ?? process.env.NEXT_PUBLIC_MOCK_NOW;
+  const fixedNow = opts.now ?? process.env.NEXT_PUBLIC_DEV_NOW;
   const baseReal = Date.now();
   const baseFixed = fixedNow ? new Date(fixedNow).getTime() : null;
   // 固定時刻からの経過は実時間で進める
@@ -264,25 +265,4 @@ export function createMockApi(opts: MockOptions = {}): Api {
         else participants.delete(`${id}|${ME_ID}`);
       }),
   };
-}
-
-/** hash(date + userId) をシードに3店。気になる店があれば1店はそこから。 */
-export function pickRecommend(all: ShopSummary[], seedStr: string): ShopSummary[] {
-  let h = 2166136261;
-  for (const c of seedStr) h = Math.imul(h ^ c.codePointAt(0)!, 16777619);
-  const rand = () => {
-    h = Math.imul(h ^ (h >>> 15), 2246822507);
-    h = Math.imul(h ^ (h >>> 13), 3266489909);
-    return ((h ^= h >>> 16) >>> 0) / 4294967296;
-  };
-  const pool = [...all];
-  const picked: ShopSummary[] = [];
-  const liked = pool.filter((s) => s.liked);
-  if (liked.length) {
-    const s = liked[Math.floor(rand() * liked.length)];
-    picked.push(s);
-    pool.splice(pool.indexOf(s), 1);
-  }
-  while (picked.length < 3 && pool.length) picked.push(pool.splice(Math.floor(rand() * pool.length), 1)[0]);
-  return picked;
 }

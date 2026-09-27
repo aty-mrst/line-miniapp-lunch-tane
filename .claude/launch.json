@@ -1,6 +1,6 @@
 {
   "version": "0.0.1",
   "configurations": [
-    { "name": "lunch-no-tane", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev"], "port": 3100 }
+    { "name": "lunch-tane", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev"], "port": 3100 }
   ]
 }

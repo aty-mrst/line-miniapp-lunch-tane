@@ -6,15 +6,27 @@ import { AppProvider, NavProvider, ToastProvider, type Nav } from '@/components/
 import { USE_MOCK } from '@/lib/constants';
 import { createMockApi } from '@/lib/api/mock';
 import { createHttpApi } from '@/lib/api/http';
-import { getIdToken } from '@/lib/liff';
+import { DEV_AUTH, getIdToken } from '@/lib/liff';
 import type { Api } from '@/lib/api/types';
 
-// モックはページをまたいで状態を保つため、モジュールで1つだけ作る。
-// モックは田中（U_dev_tanaka）として登録済みで起動。?fresh を付けると未登録（登録画面から）。
+// API はモジュールで1つだけ作る（モックはページをまたいで状態を保つ）。
+// モック：田中として登録済みで起動。?fresh を付けると未登録（登録画面から）。
+// 開発用認証（NEXT_PUBLIC_DEV_AUTH=true）：?as=U_dev_sato のようにユーザーを切り替えられる（タブごとに記憶）。
 let api: Api | null = null;
-function getApi(fresh: boolean) {
-  if (!api) api = USE_MOCK ? createMockApi({ registered: !fresh }) : createHttpApi(getIdToken);
+function getApi(search: URLSearchParams) {
+  if (api) return api;
+  if (USE_MOCK) api = createMockApi({ registered: !search.has('fresh') });
+  else api = createHttpApi(getIdToken, DEV_AUTH ? devUser(search.get('as')) : undefined);
   return api;
+}
+
+function devUser(as: string | null): string {
+  try {
+    if (as) sessionStorage.setItem('devUser', as);
+    return sessionStorage.getItem('devUser') ?? 'U_dev_tanaka';
+  } catch {
+    return as ?? 'U_dev_tanaka';
+  }
 }
 
 function Root() {
@@ -32,7 +44,7 @@ function Root() {
     [path],
   );
   return (
-    <AppProvider api={getApi(search.has('fresh'))}>
+    <AppProvider api={getApi(search)}>
       <NavProvider value={nav}>
         <ToastProvider>
           <div className="relative mx-auto h-[100dvh] max-w-[430px] overflow-hidden bg-bg">

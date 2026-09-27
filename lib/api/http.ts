@@ -1,13 +1,18 @@
 // 本番API（Route Handlers）を呼ぶ実装。Phase 4 でサーバー側を実装する。
+import { now } from '../clock';
 import { ApiError, type Api, type ShopFilter } from './types';
 
-export function createHttpApi(getIdToken: () => string | null): Api {
+/**
+ * @param getIdToken LIFF の IDトークン
+ * @param devUser 開発用（NEXT_PUBLIC_DEV_AUTH=true）。x-dev-user ヘッダーで送るユーザーID
+ */
+export function createHttpApi(getIdToken: () => string | null, devUser?: string): Api {
   async function call<T>(method: string, path: string, body?: unknown): Promise<T> {
     let res: Response;
     try {
       res = await fetch(path, {
         method,
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getIdToken() ?? ''}` },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getIdToken() ?? ''}`, ...(devUser ? { 'x-dev-user': devUser } : {}) },
         body: body === undefined ? undefined : JSON.stringify(body),
       });
     } catch {
@@ -21,7 +26,7 @@ export function createHttpApi(getIdToken: () => string | null): Api {
   const q = (f?: ShopFilter) => (f ? `?walk=${encodeURIComponent(f.walk.join(','))}&budget=${encodeURIComponent(f.budget.join(','))}&genre=${encodeURIComponent(f.genre.join(','))}` : '');
 
   return {
-    now: () => new Date(),
+    now,
     getMe: async () => {
       try {
         return await call('GET', '/api/me');
