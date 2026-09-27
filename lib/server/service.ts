@@ -6,8 +6,8 @@ import { interests, participants, reactions, recruits, shops, users } from '../d
 import { BUDGETS, GENRES, MAX_RECRUITS_PER_DAY, PLACES, WALKS, genreEmoji, isDepartTime, type DepartTime } from '../constants';
 import { now } from '../clock';
 import { isPast, jstDate } from '../time';
-import { isMapUrl, isOneEmoji, nameKey } from '../validation';
-import { pickRecommend } from '../api/recommend';
+import { isImageDataUrl, isMapUrl, isOneEmoji, nameKey } from '../validation';
+import { pickRecommend, rankShops } from '../api/recommend';
 import { ApiError, type DuplicateShop, type HomeData, type Me, type Person, type Recruit, type ShopDetail, type ShopFilter, type ShopSummary } from '../api/types';
 
 /* ---------- 入力の検証（クライアントと同じルール） ---------- */
@@ -16,6 +16,7 @@ const genreValues = GENRES.map((g) => g.v) as [string, ...string[]];
 export const registerInput = z.object({
   name: z.string().trim().min(1).max(20),
   icon: z.string().refine(isOneEmoji),
+  image: z.string().refine(isImageDataUrl).nullable().optional(),
 });
 export const shopInput = z.object({
   mapUrl: z.string().trim().refine(isMapUrl),
@@ -44,10 +45,11 @@ const uuidOk = (id: string) => /^[0-9a-f-]{36}$/i.test(id);
 
 /* ---------- ユーザー ---------- */
 
-type MeRow = { id: string; name: string; icon: string };
+type MeRow = { id: string; name: string; icon: string; image: string | null };
+const userCols = { id: users.id, name: users.name, icon: users.icon, image: users.image };
 
 export async function findMe(lineUserId: string): Promise<MeRow | null> {
-  const [u] = await db.select({ id: users.id, name: users.name, icon: users.icon }).from(users).where(eq(users.lineUserId, lineUserId));
+  const [u] = await db.select(userCols).from(users).where(eq(users.lineUserId, lineUserId));
   return u ?? null;
 }
 
@@ -60,9 +62,9 @@ export async function requireMe(lineUserId: string): Promise<MeRow> {
 export async function register(lineUserId: string, input: z.infer<typeof registerInput>): Promise<Me> {
   const [u] = await db
     .insert(users)
-    .values({ lineUserId, name: input.name, icon: input.icon })
-    .onConflictDoUpdate({ target: users.lineUserId, set: { name: input.name, icon: input.icon } })
-    .returning({ id: users.id, name: users.name, icon: users.icon });
+    .values({ lineUserId, name: input.name, icon: input.icon, image: input.image ?? null })
+    .onConflictDoUpdate({ target: users.lineUserId, set: { name: input.name, icon: input.icon, image: input.image ?? null } })
+    .returning(userCols);
   return u;
 }
 
@@ -70,21 +72,21 @@ export async function updateMe(lineUserId: string, input: z.infer<typeof registe
   const me = await requireMe(lineUserId);
   const [u] = await db
     .update(users)
-    .set({ name: input.name, icon: input.icon })
+    .set({ name: input.name, icon: input.icon, image: input.image ?? null })
     .where(eq(users.id, me.id))
-    .returning({ id: users.id, name: users.name, icon: users.icon });
+    .returning(userCols);
   return u;
 }
 
 /* ---------- 店 ---------- */
 
-const person = (u: { id: string; name: string; icon: string }, meId: string): Person => ({ name: u.name, icon: u.icon, isMe: u.id === meId });
+const person = (u: { id: string; name: string; icon: string; image: string | null }, meId: string): Person => ({ name: u.name, icon: u.icon, image: u.image, isMe: u.id === meId });
 
 async function shopSummaries(meId: string, where?: SQL): Promise<(ShopSummary & { note: string; mapUrl: string })[]> {
   const rows = await db
     .select({
       s: shops,
-      creator: { id: users.id, name: users.name, icon: users.icon },
+      creator: userCols,
       likeCount: sql<number>`(select count(*) from ${interests} i where i.shop_id = ${shops.id})::int`,
       liked: sql<boolean>`exists(select 1 from ${interests} i where i.shop_id = ${shops.id} and i.user_id = ${meId})`,
     })
@@ -129,7 +131,7 @@ export async function getShop(lineUserId: string, id: string): Promise<ShopDetai
   const [s] = await shopSummaries(me.id, eq(shops.id, id));
   if (!s) throw new ApiError(404, 'NOT_FOUND', 'お店が見つかりません');
   const likers = await db
-    .select({ id: users.id, name: users.name, icon: users.icon })
+    .select(userCols)
     .from(interests)
     .innerJoin(users, eq(users.id, interests.userId))
     .where(eq(interests.shopId, id))
@@ -225,7 +227,7 @@ async function todayRecruits(meId: string, where?: SQL): Promise<Recruit[]> {
     .select({
       r: recruits,
       shop: { id: shops.id, name: shops.name, genre: shops.genre },
-      host: { id: users.id, name: users.name, icon: users.icon },
+      host: userCols,
       count: sql<number>`(1 + (select count(*) from ${participants} p where p.recruit_id = ${recruits.id}))::int`,
       joined: sql<boolean>`exists(select 1 from ${participants} p where p.recruit_id = ${recruits.id} and p.user_id = ${meId})`,
       liked: sql<boolean>`exists(select 1 from ${interests} i where i.shop_id = ${recruits.shopId} and i.user_id = ${meId})`,
@@ -250,7 +252,13 @@ export async function getHome(lineUserId: string): Promise<HomeData> {
   const me = await requireMe(lineUserId);
   const all = (await shopSummaries(me.id)).map(strip);
   const list = (await todayRecruits(me.id)).filter((r) => !r.closed); // 締め切った募集はホームに出さない
-  return { recommend: pickRecommend(all, `${jstDate(now())}|${me.id}`), recruits: list, shopCount: all.length };
+  return {
+    recommend: pickRecommend(all, `${jstDate(now())}|${me.id}`),
+    ranking: rankShops(all),
+    recruits: list,
+    shopCount: all.length,
+    likedCount: all.filter((s) => s.liked).length,
+  };
 }
 
 export async function createRecruit(lineUserId: string, input: z.infer<typeof recruitInput>): Promise<Recruit> {

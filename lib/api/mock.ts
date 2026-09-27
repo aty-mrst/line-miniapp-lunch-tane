@@ -2,15 +2,15 @@
 // 画面側は Api インターフェースだけを見るので、本番実装（http.ts）と差し替え可能。
 import seed from '../seed.json';
 import { MAX_RECRUITS_PER_DAY, genreEmoji, isDepartTime, type Budget, type DepartTime, type Genre, type Walk } from '../constants';
-import { isOneEmoji, isMapUrl, isValidName, nameKey } from '../validation';
+import { isImageDataUrl, isOneEmoji, isMapUrl, isValidName, nameKey } from '../validation';
 import { isPast, jstDate } from '../time';
 import {
   ApiError, type Api, type DuplicateShop, type HomeData, type Me, type Person, type Recruit, type RecruitInput,
   type ShopDetail, type ShopFilter, type ShopInput, type ShopSummary,
 } from './types';
-import { pickRecommend } from './recommend';
+import { pickRecommend, rankShops } from './recommend';
 
-type UserRow = { id: string; name: string; icon: string };
+type UserRow = { id: string; name: string; icon: string; image: string | null };
 type ShopRow = { id: string; name: string; genre: Genre; walk: Walk; budget: Budget; note: string; mapUrl: string; createdBy: string; createdAt: string };
 type RecruitRow = { id: string; shopId: string; hostId: string; date: string; departTime: DepartTime; place: string; placeOther?: string; note: string; canceled: boolean; createdAt: number };
 
@@ -51,7 +51,7 @@ export function createMockApi(opts: MockOptions = {}): Api {
   const users = new Map<string, UserRow>();
   for (const u of seed.users) {
     if (u.key === 'me' && opts.registered === false) continue;
-    users.set(u.key, { id: u.key, name: u.name, icon: u.icon });
+    users.set(u.key, { id: u.key, name: u.name, icon: u.icon, image: null });
   }
 
   let shops: ShopRow[] = opts.noShops
@@ -116,7 +116,7 @@ export function createMockApi(opts: MockOptions = {}): Api {
   };
   const person = (id: string): Person => {
     const u = users.get(id);
-    return { name: u?.name ?? '?', icon: u?.icon ?? '🙂', isMe: id === ME_ID };
+    return { name: u?.name ?? '?', icon: u?.icon ?? '🙂', image: u?.image ?? null, isMe: id === ME_ID };
   };
   const likersOf = (shopId: string) => [...interests].filter((k) => k.endsWith(`|${shopId}`)).map((k) => k.split('|')[0]);
   const shopById = (id: string) => {
@@ -155,18 +155,18 @@ export function createMockApi(opts: MockOptions = {}): Api {
   return {
     now,
     getMe: () => gate('getMe', () => (users.get(ME_ID) ? { ...users.get(ME_ID)! } : null)),
-    register: ({ name, icon }) =>
+    register: ({ name, icon, image }) =>
       gate('register', (): Me => {
-        if (!isValidName(name) || !isOneEmoji(icon)) throw new ApiError(400, 'INVALID', '入力内容を確認してください');
-        const me = { id: ME_ID, name: name.trim(), icon };
+        if (!isValidName(name) || !isOneEmoji(icon) || (image && !isImageDataUrl(image))) throw new ApiError(400, 'INVALID', '入力内容を確認してください');
+        const me = { id: ME_ID, name: name.trim(), icon, image: image ?? null };
         users.set(ME_ID, me);
         return { ...me };
       }),
-    updateMe: ({ name, icon }) =>
+    updateMe: ({ name, icon, image }) =>
       gate('updateMe', (): Me => {
         const me = requireMe();
-        if (!isValidName(name) || !isOneEmoji(icon)) throw new ApiError(400, 'INVALID', '入力内容を確認してください');
-        Object.assign(me, { name: name.trim(), icon });
+        if (!isValidName(name) || !isOneEmoji(icon) || (image && !isImageDataUrl(image))) throw new ApiError(400, 'INVALID', '入力内容を確認してください');
+        Object.assign(me, { name: name.trim(), icon, image: image ?? null });
         return { ...me };
       }),
     getHome: () =>
@@ -180,7 +180,7 @@ export function createMockApi(opts: MockOptions = {}): Api {
           recommend = pickRecommend(all, `${jstDate(now())}|${ME_ID}`);
         }
         const list = activeRecruits().sort(sortRecruits).map(toRecruit).filter((r) => !r.closed);
-        return { recommend, recruits: list, shopCount: shops.length };
+        return { recommend, ranking: rankShops(all), recruits: list, shopCount: shops.length, likedCount: all.filter((s) => s.liked).length };
       }),
     listShops: (filter?: ShopFilter) =>
       gate('listShops', () => {

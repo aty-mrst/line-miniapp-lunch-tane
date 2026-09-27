@@ -32,4 +32,10 @@ export function nameKey(v: string): string {
   return v.normalize('NFKC').replace(/\s/g, '').toLowerCase();
 }
 
+/** プロフィール画像：端末で縮小した data URL（jpeg/png/webp）。サイズ上限つき */
+export const IMAGE_MAX_CHARS = 100_000;
+export function isImageDataUrl(v: string): boolean {
+  return v.length <= IMAGE_MAX_CHARS && /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/]+=*$/.test(v);
+}
+
 export const LIMITS = { name: 20, shopName: 40, shopNote: 100, recruitNote: 60, placeOther: 30 } as const;

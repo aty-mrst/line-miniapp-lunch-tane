@@ -54,6 +54,15 @@ async function main() {
   ok((await call(A, 'PATCH', '/api/me', { name: 'テストA', icon: '🐣🍙' })).status === 400, 'プロフィール編集：絵文字2つ → 400');
   const edited = await call(A, 'PATCH', '/api/me', { name: ' テストA改 ', icon: '🦉' });
   ok(edited.status === 200 && edited.json.name === 'テストA改' && edited.json.icon === '🦉', 'プロフィールを編集できる（前後の空白は除く）');
+  const IMG = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8U';
+  const withImg = await call(A, 'PATCH', '/api/me', { name: 'テストA改', icon: '🦉', image: IMG });
+  ok(withImg.status === 200 && withImg.json.image === IMG, 'プロフィール画像を設定できる');
+  ok((await call(A, 'PATCH', '/api/me', { name: 'テストA改', icon: '🦉', image: 'https://example.com/a.png' })).status === 400, '画像がdata URLでない → 400');
+  ok((await call(A, 'PATCH', '/api/me', { name: 'テストA改', icon: '🦉', image: 'data:image/svg+xml;base64,PHN2Zz4=' })).status === 400, 'SVG画像 → 400');
+  ok((await call(A, 'PATCH', '/api/me', { name: 'テストA改', icon: '🦉', image: 'data:image/jpeg;base64,' + 'A'.repeat(100_001) })).status === 400, '大きすぎる画像 → 400');
+  const noImg = await call(A, 'PATCH', '/api/me', { name: 'テストA改', icon: '🦉', image: null });
+  ok(noImg.status === 200 && noImg.json.image === null, '画像を外して絵文字に戻せる');
+  await call(A, 'PATCH', '/api/me', { name: 'テストA改', icon: '🦉', image: IMG });
 
   console.log('\n■ お店の登録');
   const shopIn = { mapUrl: `https://maps.app.goo.gl/test-${u}`, name: `テスト食堂 ${u}`, genre: 'カレー', walk: '5分以内', budget: '〜1,000円', note: 'テストです' };
@@ -62,6 +71,11 @@ async function main() {
   ok((await call(A, 'POST', '/api/shops', { ...shopIn, note: 'あ'.repeat(101) })).status === 400, 'ひとこと101文字 → 400');
   const created = await call(A, 'POST', '/api/shops', shopIn);
   ok(created.status === 200 && created.json.emoji === '🍛' && created.json.createdBy.isMe, '登録できる（絵文字はジャンルから）');
+  ok(created.json.createdBy.image?.startsWith('data:image/jpeg'), '登録者の画像がお店情報に含まれる');
+  const cafe = await call(A, 'POST', '/api/shops', { ...shopIn, mapUrl: `https://maps.app.goo.gl/cafe-${u}`, name: `テストカフェ ${u}`, genre: 'カフェ' });
+  ok(cafe.status === 200 && cafe.json.emoji === '☕', '新ジャンル「カフェ」で登録できる（☕）');
+  const teishoku = await call(A, 'PATCH', `/api/shops/${cafe.json.id}`, { ...shopIn, mapUrl: `https://maps.app.goo.gl/cafe-${u}`, name: `テストカフェ ${u}`, genre: '定食' });
+  ok(teishoku.status === 200 && teishoku.json.emoji === '🍚', '新ジャンル「定食」に変更できる（🍚）');
   const shopId: string = created.json.id;
   const dupUrl = await call(B, 'POST', '/api/shops', { ...shopIn, name: '別の名前' + u });
   ok(dupUrl.status === 409 && dupUrl.json.error.shop.id === shopId && dupUrl.json.error.shop.createdByName === 'テストA改', '同じURL → 409 DUPLICATE（登録者名つき）');
@@ -88,6 +102,12 @@ async function main() {
   await call(A, 'PUT', `/api/shops/${shopId}/interest`);
   const d1 = await call(B, 'GET', `/api/shops/${shopId}`);
   ok(d1.json.likeCount === 2 && d1.json.liked && d1.json.likers[0].isMe, '気になる人2人・自分が先頭');
+  ok(d1.json.likers.some((p: { image: string | null }) => p.image === IMG), '気になる人の画像が返る');
+  const hl = await call(B, 'GET', '/api/home');
+  ok(hl.json.likedCount === 1, 'ホームの「自分の気になる数」が1');
+  const rk = hl.json.ranking as { id: string; likeCount: number }[];
+  ok(rk.length <= 6 && rk.every((x, i) => x.likeCount > 0 && (i === 0 || rk[i - 1].likeCount >= x.likeCount)), 'ランキングは6件以内・気になる数の多い順');
+  ok(hl.json.recommend.length <= 3, 'おすすめは最大3件');
   await call(B, 'PUT', `/api/shops/${shopId}/reaction`);
   const d2 = await call(B, 'GET', `/api/shops/${shopId}`);
   ok(d2.json.reactionCount === 1 && d2.json.reacted, 'リアクションON');

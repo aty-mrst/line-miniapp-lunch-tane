@@ -1,3 +1,4 @@
+import { RANKING_SIZE } from '../constants';
 import type { ShopSummary } from './types';
 
 /** hash(date + userId) をシードに3店。気になる店があれば1店はそこから。 */
@@ -19,4 +20,12 @@ export function pickRecommend(all: ShopSummary[], seedStr: string): ShopSummary[
   }
   while (picked.length < 3 && pool.length) picked.push(pool.splice(Math.floor(rand() * pool.length), 1)[0]);
   return picked;
+}
+
+/** 気になる数ランキング：1人以上の店を多い順（同数は新しい順）に上位 RANKING_SIZE 件 */
+export function rankShops(all: ShopSummary[]): ShopSummary[] {
+  return all
+    .filter((s) => s.likeCount > 0)
+    .sort((a, b) => b.likeCount - a.likeCount || b.createdAt.localeCompare(a.createdAt))
+    .slice(0, RANKING_SIZE);
 }

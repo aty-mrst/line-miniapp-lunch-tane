@@ -1,19 +1,20 @@
 'use client';
-import { useState } from 'react';
 import { jstDateLabel } from '@/lib/time';
 import { useApp, useNav } from '../providers';
 import { RecruitCard } from '../RecruitCard';
 import { useAsync } from '../useAsync';
 import { useRecruitActions } from '../useRecruitActions';
-import { EmojiCircle, PrimaryButton, Screen, SecondaryButton, SubActionButton, cx } from '../ui';
+import { Avatar, EmojiCircle, PrimaryButton, Screen, SecondaryButton, SubActionButton, cx } from '../ui';
 
-export type HomeInitial = { expanded?: boolean; cancelId?: string };
+export type HomeInitial = { cancelId?: string };
+
+/** 横スクロール行：画面の右端まで伸ばす（左は16pxの余白） */
+const ROW = 'la-scroll -mx-4 flex snap-x gap-2 overflow-x-auto px-4 scroll-px-4';
 
 export function HomeScreen({ initial }: { initial?: HomeInitial }) {
   const { api, me } = useApp();
   const nav = useNav();
   const home = useAsync(() => api.getHome(), [api]);
-  const [expanded, setExpanded] = useState(!!initial?.expanded);
   const actions = useRecruitActions((fn) => home.setData((d) => ({ ...d, recruits: fn(d.recruits) })), {
     initialCancelId: initial?.cancelId,
     onChanged: home.refresh,
@@ -23,8 +24,6 @@ export function HomeScreen({ initial }: { initial?: HomeInitial }) {
   const ready = !home.loading && !home.error && data && data.shopCount > 0;
   const noShops = !home.loading && !home.error && data && data.shopCount === 0;
   const cards = data?.recruits ?? [];
-  const shown = expanded ? cards : cards.slice(0, 3);
-  const more = Math.max(0, cards.length - 3);
   const openShop = (id: string) => nav.push(`/shops/${id}`);
 
   return (
@@ -48,15 +47,27 @@ export function HomeScreen({ initial }: { initial?: HomeInitial }) {
           <button
             onClick={() => nav.push('/me')}
             aria-label="プロフィールを編集"
-            className="relative grid h-11 w-11 flex-none cursor-pointer place-items-center rounded-full border border-line bg-white p-0 text-[24px] transition-transform duration-100 active:scale-[.97]"
+            className="relative h-11 w-11 flex-none cursor-pointer rounded-full border border-line bg-white p-0 transition-transform duration-100 active:scale-[.97]"
           >
-            {me?.icon}
+            {me && <Avatar p={me} size={42} font={24} />}
             <span className="absolute -bottom-0.5 -right-0.5 grid h-[18px] w-[18px] place-items-center rounded-full border-[1.5px] border-white bg-ink text-[9px] leading-none text-white">✎</span>
           </button>
-          <div className="flex flex-col gap-0.5">
+          <div className="flex min-w-0 flex-1 flex-col gap-0.5">
             <div className="text-[12px] font-medium text-ink-2">{jstDateLabel(api.now())}</div>
-            <div className="font-maru text-[18px] font-bold leading-[1.3]">{me?.name}さん、今日はどこ行く？</div>
+            <div className="font-maru text-[18px] font-bold leading-[1.3]">
+              {/* 狭い画面では「〇〇さん、」の後で改行する（語の途中で折り返さない） */}
+              <span className="inline-block">{me?.name}さん、</span>
+              <span className="inline-block">今日はどこ行く？</span>
+            </div>
           </div>
+          <button
+            onClick={() => nav.push('/likes')}
+            aria-label={`気になる店 ${data?.likedCount ?? 0}件`}
+            className="flex h-11 flex-none cursor-pointer items-center gap-1 whitespace-nowrap rounded-full border-[1.5px] border-line-strong bg-white px-3 text-[13px] font-bold text-ink transition-transform duration-100 active:scale-[.97]"
+          >
+            <span aria-hidden>🌱</span>気になる
+            <span className="font-maru text-[15px] text-mustard-ink">{data?.likedCount ?? 0}</span>
+          </button>
         </div>
 
         {home.loading && <HomeSkeleton />}
@@ -93,7 +104,7 @@ export function HomeScreen({ initial }: { initial?: HomeInitial }) {
         {ready && (
           <>
             <section className="flex flex-col gap-3">
-              <h2 className="m-0 font-maru text-[17px] font-bold">今日のおすすめ</h2>
+              <h2 className="m-0 font-maru text-[17px] font-bold">今日のおすすめTOP3</h2>
               <div className="grid grid-cols-3 gap-2">
                 {data.recommend.map((s) => (
                   <button
@@ -113,25 +124,50 @@ export function HomeScreen({ initial }: { initial?: HomeInitial }) {
                 <h2 className="m-0 font-maru text-[17px] font-bold">今日ここ行く人？</h2>
                 {cards.length > 0 && <span className="rounded-full bg-tomato-soft px-2 py-[5px] text-[12px] font-bold leading-none text-tomato-ink">{cards.length}件</span>}
               </div>
-              {cards.length === 0 && (
+              {cards.length === 0 ? (
                 <div className="flex flex-col items-center gap-1.5 rounded-card border-[1.5px] border-dashed border-line-strong bg-white/50 px-4 py-6 text-center">
                   <div className="text-[30px]">🍽️</div>
                   <div className="text-[15px] font-bold leading-normal">まだ募集はありません。</div>
                   <div className="text-[13px] leading-[1.6] text-ink-2">おすすめの店から『今日ここ行く』で募集できます</div>
                 </div>
-              )}
-              {shown.map((r) => (
-                <RecruitCard key={r.id} r={r} onOpen={() => openShop(r.shop.id)} onJoin={actions.join} onCancel={actions.askCancel} />
-              ))}
-              {more > 0 && (
-                <button
-                  onClick={() => setExpanded(!expanded)}
-                  className={cx('h-11 cursor-pointer rounded-input border border-line bg-white text-[14px] font-bold text-ink')}
-                >
-                  {expanded ? '閉じる ▴' : `ほか${more}件を表示 ▾`}
-                </button>
+              ) : (
+                <div className={cx(ROW, 'items-stretch')}>
+                  {cards.map((r) => (
+                    <div key={r.id} className="flex-none snap-start" style={{ width: 'calc((100% + 8px) / 1.4)' }}>
+                      <RecruitCard r={r} variant="compact" onOpen={() => openShop(r.shop.id)} onJoin={actions.join} onCancel={actions.askCancel} />
+                    </div>
+                  ))}
+                </div>
               )}
             </section>
+
+            {data.ranking.length > 0 && (
+              <section className="flex flex-col gap-3">
+                <h2 className="m-0 font-maru text-[17px] font-bold">🌱 気になるランキング</h2>
+                <div className={ROW}>
+                  {data.ranking.slice(0, 6).map((s, i) => (
+                    <button
+                      key={s.id}
+                      onClick={() => openShop(s.id)}
+                      className="relative flex flex-none snap-start cursor-pointer flex-col items-center gap-2 rounded-card border border-line bg-white px-1.5 pb-3 pt-3.5 text-ink transition-transform duration-100 active:scale-[.97]"
+                      style={{ width: 'calc((100% - 8px) / 3.5)' }}
+                    >
+                      <span
+                        className={cx(
+                          'absolute left-1.5 top-1.5 grid h-[22px] min-w-[22px] place-items-center rounded-full px-1 font-maru text-[12px] font-bold leading-none',
+                          i < 3 ? 'bg-mustard text-white' : 'bg-neutral-tag text-ink-2',
+                        )}
+                      >
+                        {i + 1}
+                      </span>
+                      <EmojiCircle emoji={s.emoji} size={52} font={28} />
+                      <span className="line-clamp-2 text-center text-[13px] font-bold leading-[1.35]">{s.name}</span>
+                      <span className="mt-auto text-[12px] font-bold leading-none text-mustard-ink">🌱 {s.likeCount}人</span>
+                    </button>
+                  ))}
+                </div>
+              </section>
+            )}
           </>
         )}
       </Screen>
@@ -144,7 +180,7 @@ function HomeSkeleton() {
   return (
     <>
       <div className="flex flex-col gap-3">
-        <div className="h-[18px] w-[120px] rounded-md bg-skeleton" />
+        <div className="h-[18px] w-[150px] rounded-md bg-skeleton" />
         <div className="grid grid-cols-3 gap-2">
           {[0, 1, 2].map((i) => (
             <div key={i} className="h-[116px] rounded-card bg-skeleton" />
@@ -153,8 +189,19 @@ function HomeSkeleton() {
       </div>
       <div className="flex flex-col gap-3">
         <div className="h-[18px] w-[150px] rounded-md bg-skeleton" />
-        <div className="h-[92px] rounded-card bg-skeleton" />
-        <div className="h-[92px] rounded-card bg-skeleton" />
+        <div className="-mx-4 flex gap-2 overflow-hidden px-4">
+          {[0, 1].map((i) => (
+            <div key={i} className="h-[180px] flex-none rounded-card bg-skeleton" style={{ width: 'calc((100% + 8px) / 1.4)' }} />
+          ))}
+        </div>
+      </div>
+      <div className="flex flex-col gap-3">
+        <div className="h-[18px] w-[170px] rounded-md bg-skeleton" />
+        <div className="-mx-4 flex gap-2 overflow-hidden px-4">
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} className="h-[132px] flex-none rounded-card bg-skeleton" style={{ width: 'calc((100% - 8px) / 3.5)' }} />
+          ))}
+        </div>
       </div>
     </>
   );

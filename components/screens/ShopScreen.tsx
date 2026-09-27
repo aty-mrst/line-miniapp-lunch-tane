@@ -8,7 +8,7 @@ import { useApp, useNav, useToast } from '../providers';
 import { RecruitCard } from '../RecruitCard';
 import { useAsync } from '../useAsync';
 import { useRecruitActions } from '../useRecruitActions';
-import { AvatarStack, ConfirmDialog, EmojiCircle, PrimaryButton, Screen, ScreenHeader, SecondaryButton, cx } from '../ui';
+import { Avatar, AvatarStack, ConfirmDialog, PrimaryButton, Screen, ScreenHeader, SecondaryButton, cx } from '../ui';
 
 export type ShopInitial = { deleteOpen?: boolean };
 
@@ -22,11 +22,11 @@ function applyLike(d: ShopDetail, on: boolean, me: Me | null): ShopDetail {
     ...d,
     liked: on,
     likeCount: Math.max(0, d.likeCount + (on ? 1 : -1)),
-    likers: on ? [{ name: me?.name ?? '', icon: me?.icon ?? '🙂', isMe: true }, ...others] : others,
+    likers: on ? [{ name: me?.name ?? '', icon: me?.icon ?? '🙂', image: me?.image ?? null, isMe: true }, ...others] : others,
   };
 }
 
-export function ShopScreen({ id, from, initial }: { id: string; from: 'home' | 'list'; initial?: ShopInitial }) {
+export function ShopScreen({ id, from, initial }: { id: string; from: 'home' | 'list' | 'likes'; initial?: ShopInitial }) {
   const { api, me } = useApp();
   const nav = useNav();
   const toast = useToast();
@@ -39,7 +39,7 @@ export function ShopScreen({ id, from, initial }: { id: string; from: 'home' | '
   const ready = !shop.loading && !shop.error && !!d;
   const notFound = shop.error instanceof ApiError && shop.error.status === 404;
 
-  const back = () => nav.push(from === 'list' ? '/shops' : '/');
+  const back = () => nav.push(from === 'list' ? '/shops' : from === 'likes' ? '/likes' : '/');
 
   const toggleLike = async () => {
     if (!d) return;
@@ -72,7 +72,7 @@ export function ShopScreen({ id, from, initial }: { id: string; from: 'home' | '
   return (
     <>
       <Screen
-        header={<ScreenHeader backLabel={from === 'list' ? 'みんなの店' : 'ホーム'} onBack={back} />}
+        header={<ScreenHeader backLabel={from === 'list' ? 'みんなの店' : from === 'likes' ? '気になる店' : 'ホーム'} onBack={back} />}
         scrollClassName="gap-4 px-4 pb-6"
         bar={
           ready ? (
@@ -126,7 +126,7 @@ export function ShopScreen({ id, from, initial }: { id: string; from: 'home' | '
             {/* 登録者カード */}
             <div className="flex flex-col gap-3 rounded-card border border-line bg-white p-4">
               <div className="flex items-center gap-2.5">
-                <EmojiCircle emoji={d.createdBy.icon} size={36} font={20} />
+                <Avatar p={d.createdBy} size={36} font={20} />
                 <div className="flex-1 text-[14px] font-bold">{d.createdBy.isMe ? 'あなた' : `${d.createdBy.name}さん`}が登録</div>
                 <span className="text-[12px] text-ink-2">{`${shortDate(d.createdAt)}に登録`}</span>
               </div>

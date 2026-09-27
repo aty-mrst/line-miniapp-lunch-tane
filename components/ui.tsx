@@ -105,18 +105,28 @@ export function EmojiCircle({ emoji, size, font, className, style }: { emoji: st
   );
 }
 
+/** ユーザーのアバター：画像があれば画像、なければ絵文字 */
+export function Avatar({ p, size, font, className, style }: {
+  p: { icon: string; image?: string | null }; size: number; font: number; className?: string; style?: React.CSSProperties;
+}) {
+  if (p.image)
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={p.image} alt="" className={cx('flex-none rounded-full bg-emoji-bg object-cover', className)} style={{ width: size, height: size, ...style }} />;
+  return <EmojiCircle emoji={p.icon} size={size} font={font} className={className} style={style} />;
+}
+
 /** 重ねて並べるアバター。自分は枠からし色 */
 export function AvatarStack({ people, size = 38, font = 20, overlap = 10, max = 7, border = 2.5, borderColor = '#FFFFFF' }: {
-  people: { icon: string; isMe?: boolean }[]; size?: number; font?: number; overlap?: number; max?: number; border?: number; borderColor?: string;
+  people: { icon: string; image?: string | null; isMe?: boolean }[]; size?: number; font?: number; overlap?: number; max?: number; border?: number; borderColor?: string;
 }) {
   const shown = people.slice(0, max);
   const more = people.length - shown.length;
   return (
     <div className="flex items-center pl-1">
       {shown.map((p, i) => (
-        <EmojiCircle
+        <Avatar
           key={i}
-          emoji={p.icon}
+          p={p}
           size={size}
           font={font}
           className="box-border"

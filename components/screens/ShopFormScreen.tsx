@@ -220,7 +220,7 @@ export function ShopFormScreen({ editId, initial }: { editId?: string; initial?:
         <TextInput
             value={f.url}
             onChange={(e) => upd({ url: e.target.value })}
-            placeholder="https://maps.app.goo.gl/…"
+            placeholder="例：https://maps.app.goo.gl/abc123"
             inputMode="url"
             autoComplete="off"
             aria-label="Googleマップのリンク"

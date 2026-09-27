@@ -1,8 +1,11 @@
 import type { Budget, DepartTime, Genre, Place, Walk } from '../constants';
 
-export type Me = { id: string; name: string; icon: string };
+/** アイコンは絵文字（icon）か画像（image：縮小済みの data URL）。image があれば画像を優先して表示 */
+export type Me = { id: string; name: string; icon: string; image: string | null };
 
-export type Person = { name: string; icon: string; isMe: boolean };
+export type ProfileInput = { name: string; icon: string; image?: string | null };
+
+export type Person = { name: string; icon: string; image: string | null; isMe: boolean };
 
 export type ShopSummary = {
   id: string;
@@ -40,7 +43,13 @@ export type ShopDetail = ShopSummary & {
   recruits: Recruit[];
 };
 
-export type HomeData = { recommend: ShopSummary[]; recruits: Recruit[]; shopCount: number };
+export type HomeData = {
+  recommend: ShopSummary[]; // 今日のおすすめTOP3（最大3件）
+  ranking: ShopSummary[]; // 気になる数ランキング（1人以上の店の上位6件）
+  recruits: Recruit[];
+  shopCount: number;
+  likedCount: number; // 自分が「気になる」にしている店の数
+};
 
 export type ShopInput = { mapUrl: string; name: string; genre: Genre; walk: Walk; budget: Budget; note: string };
 
@@ -59,8 +68,8 @@ export class ApiError extends Error {
 export interface Api {
   now(): Date;
   getMe(): Promise<Me | null>;
-  register(input: { name: string; icon: string }): Promise<Me>;
-  updateMe(input: { name: string; icon: string }): Promise<Me>;
+  register(input: ProfileInput): Promise<Me>;
+  updateMe(input: ProfileInput): Promise<Me>;
   getHome(): Promise<HomeData>;
   listShops(filter?: ShopFilter): Promise<ShopSummary[]>;
   checkShop(q: { url: string; name: string; excludeId?: string }): Promise<DuplicateShop | null>;

@@ -9,17 +9,22 @@ export function ProfileScreen() {
   const { api, me, setMe } = useApp();
   const nav = useNav();
   const toast = useToast();
-  const form = useProfileForm({ name: me?.name, icon: me?.icon });
+  const form = useProfileForm({ name: me?.name, icon: me?.icon, image: me?.image ?? null });
   const [busy, setBusy] = useState(false);
 
-  const changed = form.name.trim() !== me?.name || form.icon !== me?.icon;
+  const next = form.payload();
+  const initialMode = me?.image ? 'image' : 'emoji';
+  const changed =
+    next.name !== me?.name ||
+    form.mode !== initialMode ||
+    (form.mode === 'image' ? next.image !== (me?.image ?? null) : form.icon !== me?.icon);
   const reason = !form.valid ? 'アイコンと名前を入れると押せます' : !changed ? '変更すると押せます' : undefined;
 
   const save = async () => {
     if (!form.valid || !changed || busy) return;
     setBusy(true);
     try {
-      setMe(await api.updateMe({ name: form.name.trim(), icon: form.icon }));
+      setMe(await api.updateMe(next));
       toast.show('プロフィールを保存しました');
       nav.push('/');
     } catch {

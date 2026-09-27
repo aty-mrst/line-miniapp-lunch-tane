@@ -2,7 +2,7 @@
 import { sql } from 'drizzle-orm';
 import { check, date, index, pgEnum, pgTable, primaryKey, text, time, timestamp, uuid } from 'drizzle-orm/pg-core';
 
-export const genre = pgEnum('genre', ['ラーメン', 'うどん・そば', '寿司・海鮮', 'カレー', 'タイ料理', '和食', 'イタリアン', 'その他']);
+export const genre = pgEnum('genre', ['ラーメン', 'うどん・そば', '寿司・海鮮', 'カレー', 'タイ料理', '和食', '定食', 'イタリアン', 'カフェ', 'その他']);
 export const walk = pgEnum('walk', ['5分以内', '10分以内', '10分以上']);
 export const budget = pgEnum('budget', ['〜1,000円', '〜1,500円', '1,500円〜']);
 
@@ -12,10 +12,14 @@ export const users = pgTable(
     id: uuid('id').primaryKey().defaultRandom(),
     lineUserId: text('line_user_id').notNull().unique(),
     name: text('name').notNull(),
-    icon: text('icon').notNull(), // 絵文字1つ（アプリで検証）
+    icon: text('icon').notNull(), // 絵文字1つ（アプリで検証）。画像を使う人も予備として持つ
+    image: text('image'), // プロフィール画像（端末で縮小した data URL）。null なら絵文字を表示
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   },
-  (t) => [check('users_name_len', sql`char_length(${t.name}) between 1 and 20`)],
+  (t) => [
+    check('users_name_len', sql`char_length(${t.name}) between 1 and 20`),
+    check('users_image_len', sql`char_length(${t.image}) <= 100000`),
+  ],
 );
 
 export const shops = pgTable(

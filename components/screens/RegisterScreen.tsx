@@ -43,7 +43,7 @@ export function RegisterScreen({ initial, onDone }: { initial?: RegisterInitial;
     if (!form.valid || busy) return;
     setBusy(true);
     try {
-      onDone(await api.register({ name: form.name.trim(), icon: form.icon }));
+      onDone(await api.register(form.payload()));
     } catch {
       toast.show('通信エラーで登録できませんでした。もう一度お試しください', 'err');
       setBusy(false);

@@ -1,5 +1,5 @@
 'use client';
-// 開発用：デザインボード（ランチのたね UI.dc.html）の ⓪-1〜⑤-3 を実装で並べて確認するページ。本番では無効。
+// 開発用：デザインボード（ランチのたね UI.dc.html）の ⓪-1〜⑤-5 を実装で並べて確認するページ。本番では無効。
 import { useMemo, useState, type ReactNode } from 'react';
 import { AppRoutes, type ScreenInitial } from '@/components/AppRoutes';
 import { AppProvider, NavProvider, ToastProvider, type Nav } from '@/components/providers';
@@ -48,8 +48,8 @@ const SECTIONS: { id: string; title: string; states: State[] }[] = [
     states: [
       { id: '1-1', label: '通常（募集1件）', mock: { recruits: ['r1'] } },
       { id: '1-2', label: '募集が複数（3件）', mock: { recruits: MULTI, liked: ['s1'] } },
-      { id: '1-3', label: '募集が4件以上（折りたたみ）', mock: { recruits: ALL } },
-      { id: '1-4', label: '募集が4件以上・展開後', optional: true, mock: { recruits: ALL }, initial: { home: { expanded: true } } },
+      { id: '1-3', label: '募集が多い（横スクロール）', mock: { recruits: ALL, liked: ['s1', 's3'] } },
+      { id: '1-4', label: '自分の「気になる」が0件', optional: true, mock: { recruits: ['r1'], liked: [] } },
       { id: '1-5', label: '今日の募集がない', mock: { recruits: [] } },
       { id: '1-6', label: 'お店が0件', mock: { noShops: true } },
       { id: '1-7', label: '読み込み中', optional: true, mock: { hang: ['getHome'] } },
@@ -117,16 +117,18 @@ const SECTIONS: { id: string; title: string; states: State[] }[] = [
   },
   {
     id: 's5',
-    title: '⑤ みんなの店（一覧）',
+    title: '⑤ みんなの店（一覧）・気になる店',
     states: [
       { id: '5-1', label: '通常', path: '/shops' },
       { id: '5-2', label: '絞り込み中', path: '/shops', initial: { list: { filter: { walk: ['5分以内'] } } } },
       { id: '5-3', label: '該当なし', path: '/shops', initial: { list: { filter: { walk: ['5分以内'], genre: ['寿司・海鮮'] } } } },
+      { id: '5-4', label: '気になる店', path: '/likes', mock: { liked: ['s1', 's3'] } },
+      { id: '5-5', label: '気になる店がない', optional: true, path: '/likes', mock: { liked: [] } },
     ],
   },
 ];
 
-const ME = { id: 'me', name: '田中', icon: '🐣' };
+const ME = { id: 'me', name: '田中', icon: '🐣', image: null };
 
 function PhoneFrame({ children }: { children: ReactNode }) {
   return (
@@ -168,7 +170,7 @@ function StateFrame({ s }: { s: State }) {
 
 function CardsSheet() {
   const base = { note: '', joined: false, isMine: false, closed: false, likedByMe: false };
-  const host = (name: string, icon: string, isMe = false) => ({ name, icon, isMe });
+  const host = (name: string, icon: string, isMe = false) => ({ name, icon, image: null, isMe });
   const cards: [string, Recruit][] = [
     ['参加できる', { ...base, id: 'a', shop: { id: 's2', name: '定食屋 こまち', emoji: '🍱' }, host: host('鈴木', '⚽'), departTime: '12:30', place: '1階ロビー', count: 1 }],
     ['参加中', { ...base, id: 'b', shop: { id: 's1', name: '麺処 しおかぜ', emoji: '🍜' }, host: host('佐藤', '🐳'), departTime: '12:15', place: '1階ロビー', count: 3, joined: true }],
@@ -184,6 +186,14 @@ function CardsSheet() {
           <RecruitCard r={r} />
         </div>
       ))}
+      <div className="text-[12px] font-bold leading-[1.3] text-ink-2">ホームの横スクロール用（variant=&quot;compact&quot;）</div>
+      <div className="la-scroll -mx-4 flex items-stretch gap-2 overflow-x-auto px-4">
+        {cards.map(([, r]) => (
+          <div key={r.id} className="w-[250px] flex-none">
+            <RecruitCard r={r} variant="compact" />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
