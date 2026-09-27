@@ -1,6 +1,6 @@
 // DATA_AND_API.md「DBスキーマ」をDrizzleで定義
 import { sql } from 'drizzle-orm';
-import { check, date, index, pgEnum, pgTable, primaryKey, text, time, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
+import { check, date, index, pgEnum, pgTable, primaryKey, text, time, timestamp, uuid } from 'drizzle-orm/pg-core';
 
 export const genre = pgEnum('genre', ['ラーメン', 'うどん・そば', '寿司・海鮮', 'カレー', 'タイ料理', '和食', 'イタリアン', 'その他']);
 export const walk = pgEnum('walk', ['5分以内', '10分以内', '10分以上']);
@@ -80,7 +80,6 @@ export const recruits = pgTable(
     check('recruits_place_other', sql`${t.place} <> 'その他' or ${t.placeOther} is not null`),
     check('recruits_place_other_len', sql`char_length(${t.placeOther}) <= 30`),
     check('recruits_note_len', sql`char_length(${t.note}) <= 60`),
-    uniqueIndex('one_recruit_per_host_per_day').on(t.hostId, t.date).where(sql`${t.canceledAt} is null`),
     index('recruits_by_date').on(t.date, t.departTime).where(sql`${t.canceledAt} is null`),
   ],
 );

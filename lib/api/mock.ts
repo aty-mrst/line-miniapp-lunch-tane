@@ -1,7 +1,7 @@
 // メモリ上のモックAPI（NEXT_PUBLIC_USE_MOCK=true）。seed.json から作る。
 // 画面側は Api インターフェースだけを見るので、本番実装（http.ts）と差し替え可能。
 import seed from '../seed.json';
-import { genreEmoji, isDepartTime, type Budget, type DepartTime, type Genre, type Walk } from '../constants';
+import { MAX_RECRUITS_PER_DAY, genreEmoji, isDepartTime, type Budget, type DepartTime, type Genre, type Walk } from '../constants';
 import { isOneEmoji, isMapUrl, isValidName, nameKey } from '../validation';
 import { isPast, jstDate } from '../time';
 import {
@@ -249,7 +249,7 @@ export function createMockApi(opts: MockOptions = {}): Api {
         shopById(input.shopId);
         if (!isDepartTime(input.departTime) || isPast(input.departTime, now())) throw new ApiError(400, 'INVALID', 'その出発時間は選べません');
         if (input.place === 'その他' && !input.placeOther?.trim()) throw new ApiError(400, 'INVALID', '集合場所を入力してください');
-        if (activeRecruits().some((r) => r.hostId === ME_ID)) throw new ApiError(409, 'ALREADY_HOSTING', '今日の募集はすでに作成しています');
+        if (activeRecruits().filter((r) => r.hostId === ME_ID).length >= MAX_RECRUITS_PER_DAY) throw new ApiError(409, 'ALREADY_HOSTING', `今日の募集は${MAX_RECRUITS_PER_DAY}件までです`);
         const row: RecruitRow = {
           id: `rx${Date.now()}`, shopId: input.shopId, hostId: ME_ID, date: jstDate(now()), departTime: input.departTime, place: input.place,
           placeOther: input.place === 'その他' ? input.placeOther?.trim() : undefined, note: input.note?.trim() ?? '', canceled: false, createdAt: seq++,

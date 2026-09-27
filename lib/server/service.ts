@@ -3,7 +3,7 @@ import { and, asc, eq, isNull, sql, type SQL } from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '../db';
 import { interests, participants, reactions, recruits, shops, users } from '../db/schema';
-import { BUDGETS, GENRES, PLACES, WALKS, genreEmoji, isDepartTime, type DepartTime } from '../constants';
+import { BUDGETS, GENRES, MAX_RECRUITS_PER_DAY, PLACES, WALKS, genreEmoji, isDepartTime, type DepartTime } from '../constants';
 import { now } from '../clock';
 import { isPast, jstDate } from '../time';
 import { isMapUrl, isOneEmoji, nameKey } from '../validation';
@@ -259,20 +259,26 @@ export async function createRecruit(lineUserId: string, input: z.infer<typeof re
   if (isPast(input.departTime, t)) throw new ApiError(400, 'INVALID', 'その出発時間はもう過ぎています');
   const [shop] = await db.select({ id: shops.id }).from(shops).where(eq(shops.id, input.shopId));
   if (!shop) throw new ApiError(404, 'NOT_FOUND', 'お店が見つかりません');
-  try {
-    const [row] = await db
+  const date = jstDate(t);
+  // 1日の上限は同時実行でも超えないよう、主催者ごとのロックを取ってから数える
+  const id = await db.transaction(async (tx) => {
+    await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${me.id}))`);
+    const [{ n }] = await tx
+      .select({ n: sql<number>`count(*)::int` })
+      .from(recruits)
+      .where(and(eq(recruits.hostId, me.id), eq(recruits.date, date), isNull(recruits.canceledAt)));
+    if (n >= MAX_RECRUITS_PER_DAY) throw new ApiError(409, 'ALREADY_HOSTING', `今日の募集は${MAX_RECRUITS_PER_DAY}件までです`);
+    const [row] = await tx
       .insert(recruits)
       .values({
-        shopId: input.shopId, hostId: me.id, date: jstDate(t), departTime: input.departTime, place: input.place,
+        shopId: input.shopId, hostId: me.id, date, departTime: input.departTime, place: input.place,
         placeOther: input.place === 'その他' ? input.placeOther : null, note: input.note ?? '',
       })
       .returning({ id: recruits.id });
-    const [r] = await todayRecruits(me.id, eq(recruits.id, row.id));
-    return r;
-  } catch (e) {
-    if (isUniqueViolation(e, 'one_recruit_per_host_per_day')) throw new ApiError(409, 'ALREADY_HOSTING', '今日の募集はすでに作成しています');
-    throw e;
-  }
+    return row.id;
+  });
+  const [r] = await todayRecruits(me.id, eq(recruits.id, id));
+  return r;
 }
 
 async function todayRecruitRow(id: string) {

@@ -1,0 +1,1 @@
+DROP INDEX "one_recruit_per_host_per_day";

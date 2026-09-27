@@ -115,8 +115,12 @@ async function main() {
   const rec = await call(A, 'POST', '/api/recruits', { shopId, departTime: '13:35', place: 'その他', placeOther: '虎ノ門駅 2番出口', note: 'さくっと' });
   ok(rec.status === 200 && rec.json.place === '虎ノ門駅 2番出口' && rec.json.isMine && rec.json.count === 1, '募集できる（その他の場所が表示名になる）');
   const rid: string = rec.json.id;
-  const again = await call(A, 'POST', '/api/recruits', { shopId, departTime: '13:00', place: '現地' });
-  ok(again.status === 409 && again.json.error.code === 'ALREADY_HOSTING', '1人1日1件まで → 409');
+  const second = await call(A, 'POST', '/api/recruits', { shopId, departTime: '13:00', place: '現地' });
+  ok(second.status === 200, '2件目の募集はできる');
+  const third = await call(A, 'POST', '/api/recruits', { shopId, departTime: '13:10', place: '現地' });
+  ok(third.status === 409 && third.json.error.code === 'ALREADY_HOSTING' && third.json.error.message === '今日の募集は2件までです', '3件目 → 409（1日2件まで）');
+  const burst = await Promise.all([1, 2, 3].map(() => call(B, 'POST', '/api/recruits', { shopId, departTime: '13:20', place: '現地' })));
+  ok(burst.filter((r) => r.status === 200).length === 2, '同時に3件送っても作られるのは2件まで');
   const hb = await call(B, 'GET', '/api/home');
   const cardB = hb.json.recruits.find((r: { id: string }) => r.id === rid);
   ok(cardB && cardB.likedByMe && !cardB.isMine, 'Bのホームに出て、気になる店としてハイライト');
@@ -137,7 +141,7 @@ async function main() {
   ok((await call(A, 'DELETE', `/api/recruits/${rid}`)).status === 204, '主催者は取り消せる');
   ok(!(await call(B, 'GET', '/api/home')).json.recruits.some((r: { id: string }) => r.id === rid), '取り消した募集はホームから消える');
   ok((await call(B, 'PUT', `/api/recruits/${rid}/join`)).status === 410, '取り消し済みに参加 → 410');
-  ok((await call(A, 'POST', '/api/recruits', { shopId, departTime: '13:00', place: '現地' })).status === 200, '取り消し後はもう1件募集できる');
+  ok((await call(A, 'POST', '/api/recruits', { shopId, departTime: '13:45', place: '現地' })).status === 200, '取り消した募集は数えない（取り消し後にまた作れる）');
 
   console.log('\n■ お店の削除（関連データも消える）');
   await call(B, 'PUT', `/api/shops/${shopId}/interest`);

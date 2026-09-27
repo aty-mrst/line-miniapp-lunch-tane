@@ -19,6 +19,9 @@ export const PLACES = [
   { v: 'その他', e: '✏️' },
 ] as const;
 
+/** 1人が1日に作れる募集の上限（取り消した募集は数えない） */
+export const MAX_RECRUITS_PER_DAY = 2;
+
 /** 出発時間：この範囲を STEP 分刻みで自由に選べる（JST） */
 // TODO(テスト期間中): 夜でも募集を試せるよう 00:00〜23:55 に広げている。本番運用に戻すときは from: '11:00', to: '14:00' に戻す
 export const DEPART_RANGE = { from: '00:00', to: '23:55', stepMin: 5 } as const;
