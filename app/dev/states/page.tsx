@@ -107,6 +107,12 @@ const SECTIONS: { id: string; title: string; states: State[] }[] = [
         mock: { recruits: MULTI, mine: { shop: 's3', departTime: '12:30', place: '1階ロビー' } },
         initial: { home: { cancelId: 'rm' } },
       },
+      {
+        id: '4-6',
+        label: '自分の募集に参加者が来た（追加）',
+        optional: true,
+        mock: { recruits: MULTI, mine: { shop: 's3', departTime: '12:10', place: '1階ロビー', participants: ['sato', 'kato'] } },
+      },
     ],
   },
   {

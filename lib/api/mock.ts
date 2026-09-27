@@ -25,7 +25,7 @@ export type MockOptions = {
   /** 自分が参加している募集 */
   joined?: string[];
   /** 自分の募集を1件足す */
-  mine?: { shop: string; departTime: DepartTime; place: string };
+  mine?: { shop: string; departTime: DepartTime; place: string; participants?: string[] };
   /** おすすめ3店を固定（デザイン再現用） */
   recommend?: string[];
   latency?: number;
@@ -86,6 +86,7 @@ export function createMockApi(opts: MockOptions = {}): Api {
   (opts.joined ?? []).forEach((id) => participants.add(`${id}|${ME_ID}`));
   if (opts.mine) {
     recruits.unshift({ id: 'rm', shopId: opts.mine.shop, hostId: ME_ID, date: today, departTime: opts.mine.departTime, place: opts.mine.place, note: '', canceled: false, createdAt: seq++ });
+    (opts.mine.participants ?? []).forEach((u) => participants.add(`rm|${u}`));
   }
 
   const failed = new Set<string>();
