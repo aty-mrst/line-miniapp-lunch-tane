@@ -111,7 +111,7 @@ async function main() {
   ok((await call(A, 'POST', '/api/recruits', { shopId, departTime: '12:00', place: '1階ロビー' })).status === 400, '過ぎた時間 → 400');
   ok((await call(A, 'POST', '/api/recruits', { shopId, departTime: '13:15', place: 'その他' })).status === 400, '「その他」で場所の入力なし → 400');
   ok((await call(A, 'POST', '/api/recruits', { shopId, departTime: '12:07', place: '1階ロビー' })).status === 400, '5分刻みでない時間 → 400');
-  ok((await call(A, 'POST', '/api/recruits', { shopId, departTime: '14:05', place: '1階ロビー' })).status === 400, '範囲外（14:00より後）→ 400');
+  ok((await call(A, 'POST', '/api/recruits', { shopId, departTime: '24:00', place: '1階ロビー' })).status === 400, '範囲外の時間 → 400');
   const rec = await call(A, 'POST', '/api/recruits', { shopId, departTime: '13:35', place: 'その他', placeOther: '虎ノ門駅 2番出口', note: 'さくっと' });
   ok(rec.status === 200 && rec.json.place === '虎ノ門駅 2番出口' && rec.json.isMine && rec.json.count === 1, '募集できる（その他の場所が表示名になる）');
   const rid: string = rec.json.id;

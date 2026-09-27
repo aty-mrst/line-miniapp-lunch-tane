@@ -20,7 +20,8 @@ export const PLACES = [
 ] as const;
 
 /** 出発時間：この範囲を STEP 分刻みで自由に選べる（JST） */
-export const DEPART_RANGE = { from: '11:00', to: '14:00', stepMin: 5 } as const;
+// TODO(テスト期間中): 夜でも募集を試せるよう 00:00〜23:55 に広げている。本番運用に戻すときは from: '11:00', to: '14:00' に戻す
+export const DEPART_RANGE = { from: '00:00', to: '23:55', stepMin: 5 } as const;
 
 const toMin = (t: string) => Number(t.slice(0, 2)) * 60 + Number(t.slice(3, 5));
 const toHHMM = (m: number) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
