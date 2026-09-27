@@ -50,6 +50,10 @@ async function main() {
   ok((await call(B, 'POST', '/api/me', { name: 'テストB', icon: '🇯🇵' })).status === 200, '国旗 → OK');
   const meA = await call(A, 'GET', '/api/me');
   ok(meA.json.name === 'テストA' && meA.json.icon === '👨‍👩‍👧', '登録内容が取得できる');
+  ok((await call('U_dev_test_c', 'PATCH', '/api/me', { name: 'x', icon: '🐣' })).status === 404, '未登録ユーザーはプロフィール編集できない → 404');
+  ok((await call(A, 'PATCH', '/api/me', { name: 'テストA', icon: '🐣🍙' })).status === 400, 'プロフィール編集：絵文字2つ → 400');
+  const edited = await call(A, 'PATCH', '/api/me', { name: ' テストA改 ', icon: '🦉' });
+  ok(edited.status === 200 && edited.json.name === 'テストA改' && edited.json.icon === '🦉', 'プロフィールを編集できる（前後の空白は除く）');
 
   console.log('\n■ お店の登録');
   const shopIn = { mapUrl: `https://maps.app.goo.gl/test-${u}`, name: `テスト食堂 ${u}`, genre: 'カレー', walk: '5分以内', budget: '〜1,000円', note: 'テストです' };
@@ -60,7 +64,7 @@ async function main() {
   ok(created.status === 200 && created.json.emoji === '🍛' && created.json.createdBy.isMe, '登録できる（絵文字はジャンルから）');
   const shopId: string = created.json.id;
   const dupUrl = await call(B, 'POST', '/api/shops', { ...shopIn, name: '別の名前' + u });
-  ok(dupUrl.status === 409 && dupUrl.json.error.shop.id === shopId && dupUrl.json.error.shop.createdByName === 'テストA', '同じURL → 409 DUPLICATE（登録者名つき）');
+  ok(dupUrl.status === 409 && dupUrl.json.error.shop.id === shopId && dupUrl.json.error.shop.createdByName === 'テストA改', '同じURL → 409 DUPLICATE（登録者名つき）');
   const dupName = await call(B, 'POST', '/api/shops', { ...shopIn, mapUrl: `https://maps.app.goo.gl/other-${u}`, name: `テスト食堂　${u.toUpperCase()}` });
   ok(dupName.status === 409, '店名の全角空白・大文字違い → 409（正規化して判定）');
   const chk = await call(B, 'GET', `/api/shops/check?url=&name=${encodeURIComponent(shopIn.name)}`);
@@ -106,8 +110,9 @@ async function main() {
   console.log('\n■ 募集（今日ここ行く）');
   ok((await call(A, 'POST', '/api/recruits', { shopId, departTime: '12:00', place: '1階ロビー' })).status === 400, '過ぎた時間 → 400');
   ok((await call(A, 'POST', '/api/recruits', { shopId, departTime: '13:15', place: 'その他' })).status === 400, '「その他」で場所の入力なし → 400');
-  ok((await call(A, 'POST', '/api/recruits', { shopId, departTime: '12:10', place: '1階ロビー' })).status === 400, '選択肢にない時間 → 400');
-  const rec = await call(A, 'POST', '/api/recruits', { shopId, departTime: '13:15', place: 'その他', placeOther: '虎ノ門駅 2番出口', note: 'さくっと' });
+  ok((await call(A, 'POST', '/api/recruits', { shopId, departTime: '12:07', place: '1階ロビー' })).status === 400, '5分刻みでない時間 → 400');
+  ok((await call(A, 'POST', '/api/recruits', { shopId, departTime: '14:05', place: '1階ロビー' })).status === 400, '範囲外（14:00より後）→ 400');
+  const rec = await call(A, 'POST', '/api/recruits', { shopId, departTime: '13:35', place: 'その他', placeOther: '虎ノ門駅 2番出口', note: 'さくっと' });
   ok(rec.status === 200 && rec.json.place === '虎ノ門駅 2番出口' && rec.json.isMine && rec.json.count === 1, '募集できる（その他の場所が表示名になる）');
   const rid: string = rec.json.id;
   const again = await call(A, 'POST', '/api/recruits', { shopId, departTime: '13:00', place: '現地' });

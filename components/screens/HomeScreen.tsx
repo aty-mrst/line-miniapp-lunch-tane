@@ -45,7 +45,14 @@ export function HomeScreen({ initial }: { initial?: HomeInitial }) {
         }
       >
         <div className="flex items-center gap-3">
-          <span className="grid h-11 w-11 flex-none place-items-center rounded-full border border-line bg-white text-[24px]">{me?.icon}</span>
+          <button
+            onClick={() => nav.push('/me')}
+            aria-label="プロフィールを編集"
+            className="relative grid h-11 w-11 flex-none cursor-pointer place-items-center rounded-full border border-line bg-white p-0 text-[24px] transition-transform duration-100 active:scale-[.97]"
+          >
+            {me?.icon}
+            <span className="absolute -bottom-0.5 -right-0.5 grid h-[18px] w-[18px] place-items-center rounded-full border-[1.5px] border-white bg-ink text-[9px] leading-none text-white">✎</span>
+          </button>
           <div className="flex flex-col gap-0.5">
             <div className="text-[12px] font-medium text-ink-2">{jstDateLabel(api.now())}</div>
             <div className="font-maru text-[18px] font-bold leading-[1.3]">{me?.name}さん、今日はどこ行く？</div>

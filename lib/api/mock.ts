@@ -1,7 +1,7 @@
 // メモリ上のモックAPI（NEXT_PUBLIC_USE_MOCK=true）。seed.json から作る。
 // 画面側は Api インターフェースだけを見るので、本番実装（http.ts）と差し替え可能。
 import seed from '../seed.json';
-import { DEPART_TIMES, genreEmoji, type Budget, type DepartTime, type Genre, type Walk } from '../constants';
+import { genreEmoji, isDepartTime, type Budget, type DepartTime, type Genre, type Walk } from '../constants';
 import { isOneEmoji, isMapUrl, isValidName, nameKey } from '../validation';
 import { isPast, jstDate } from '../time';
 import {
@@ -161,6 +161,13 @@ export function createMockApi(opts: MockOptions = {}): Api {
         users.set(ME_ID, me);
         return { ...me };
       }),
+    updateMe: ({ name, icon }) =>
+      gate('updateMe', (): Me => {
+        const me = requireMe();
+        if (!isValidName(name) || !isOneEmoji(icon)) throw new ApiError(400, 'INVALID', '入力内容を確認してください');
+        Object.assign(me, { name: name.trim(), icon });
+        return { ...me };
+      }),
     getHome: () =>
       gate('getHome', (): HomeData => {
         requireMe();
@@ -239,7 +246,7 @@ export function createMockApi(opts: MockOptions = {}): Api {
       gate('createRecruit', () => {
         requireMe();
         shopById(input.shopId);
-        if (!DEPART_TIMES.includes(input.departTime) || isPast(input.departTime, now())) throw new ApiError(400, 'INVALID', 'その出発時間は選べません');
+        if (!isDepartTime(input.departTime) || isPast(input.departTime, now())) throw new ApiError(400, 'INVALID', 'その出発時間は選べません');
         if (input.place === 'その他' && !input.placeOther?.trim()) throw new ApiError(400, 'INVALID', '集合場所を入力してください');
         if (activeRecruits().some((r) => r.hostId === ME_ID)) throw new ApiError(409, 'ALREADY_HOSTING', '今日の募集はすでに作成しています');
         const row: RecruitRow = {

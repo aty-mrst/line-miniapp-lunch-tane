@@ -3,7 +3,7 @@ import { and, asc, eq, isNull, sql, type SQL } from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '../db';
 import { interests, participants, reactions, recruits, shops, users } from '../db/schema';
-import { BUDGETS, DEPART_TIMES, GENRES, PLACES, WALKS, genreEmoji, type DepartTime } from '../constants';
+import { BUDGETS, GENRES, PLACES, WALKS, genreEmoji, isDepartTime, type DepartTime } from '../constants';
 import { now } from '../clock';
 import { isPast, jstDate } from '../time';
 import { isMapUrl, isOneEmoji, nameKey } from '../validation';
@@ -28,7 +28,7 @@ export const shopInput = z.object({
 export const recruitInput = z
   .object({
     shopId: z.string().uuid(),
-    departTime: z.enum(DEPART_TIMES),
+    departTime: z.string().refine(isDepartTime),
     place: z.enum(PLACES.map((p) => p.v) as [string, ...string[]]),
     placeOther: z.string().trim().max(30).optional(),
     note: z.string().trim().max(60).optional(),
@@ -62,6 +62,16 @@ export async function register(lineUserId: string, input: z.infer<typeof registe
     .insert(users)
     .values({ lineUserId, name: input.name, icon: input.icon })
     .onConflictDoUpdate({ target: users.lineUserId, set: { name: input.name, icon: input.icon } })
+    .returning({ id: users.id, name: users.name, icon: users.icon });
+  return u;
+}
+
+export async function updateMe(lineUserId: string, input: z.infer<typeof registerInput>): Promise<Me> {
+  const me = await requireMe(lineUserId);
+  const [u] = await db
+    .update(users)
+    .set({ name: input.name, icon: input.icon })
+    .where(eq(users.id, me.id))
     .returning({ id: users.id, name: users.name, icon: users.icon });
   return u;
 }

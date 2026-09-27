@@ -26,11 +26,6 @@ function applyLike(d: ShopDetail, on: boolean, me: Me | null): ShopDetail {
   };
 }
 
-function applyReaction(d: ShopDetail, on: boolean): ShopDetail {
-  if (d.reacted === on) return d;
-  return { ...d, reacted: on, reactionCount: Math.max(0, d.reactionCount + (on ? 1 : -1)) };
-}
-
 export function ShopScreen({ id, from, initial }: { id: string; from: 'home' | 'list'; initial?: ShopInitial }) {
   const { api, me } = useApp();
   const nav = useNav();
@@ -59,18 +54,6 @@ export function ShopScreen({ id, from, initial }: { id: string; from: 'home' | '
     }
   };
 
-  const toggleReaction = async () => {
-    if (!d) return;
-    const on = !d.reacted;
-    shop.setData((x) => applyReaction(x, on));
-    try {
-      await api.setReaction(id, on);
-    } catch {
-      shop.setData((x) => applyReaction(x, !on));
-      toast.show('通信エラーで操作できませんでした。もう一度お試しください', 'err');
-    }
-  };
-
   const confirmDelete = async () => {
     setDeleting(true);
     try {
@@ -94,22 +77,7 @@ export function ShopScreen({ id, from, initial }: { id: string; from: 'home' | '
         bar={
           ready ? (
             <>
-              <div className="flex gap-2">
-                <button
-                  onClick={toggleLike}
-                  aria-pressed={d.liked}
-                  className={cx(
-                    'h-12 flex-1 rounded-full border-[1.5px] text-[15px] font-bold',
-                    d.liked ? 'border-mustard bg-mustard-soft text-mustard-ink' : 'border-line-strong bg-white text-ink',
-                    press,
-                  )}
-                >
-                  {d.liked ? '🌱 気になる ✓' : '🌱 気になる'}
-                </button>
-                <SecondaryButton className="flex-1" onClick={() => void openExternal(d.mapUrl)}>
-                  📍 マップで開く
-                </SecondaryButton>
-              </div>
+              <SecondaryButton onClick={() => void openExternal(d.mapUrl)}>📍 マップで開く</SecondaryButton>
               <PrimaryButton onClick={() => nav.push(`/shops/${id}/recruit`)}>🙋 今日ここ行く</PrimaryButton>
             </>
           ) : undefined
@@ -165,19 +133,6 @@ export function ShopScreen({ id, from, initial }: { id: string; from: 'home' | '
               {!!d.note && (
                 <div className="rounded-[4px_14px_14px_14px] bg-bg px-3.5 py-3 text-[15px] leading-[1.65] [text-wrap:pretty]">{d.note}</div>
               )}
-              <div className="flex gap-2">
-                <button
-                  onClick={toggleReaction}
-                  aria-pressed={d.reacted}
-                  className={cx(
-                    'flex h-9 items-center gap-1.5 rounded-full border-[1.5px] px-3 text-[13px] font-bold',
-                    d.reacted ? 'border-tomato bg-tomato-soft text-tomato-ink' : 'border-line bg-bg text-ink',
-                    press,
-                  )}
-                >
-                  😋 気になる！<span className="font-medium">{d.reactionCount}</span>
-                </button>
-              </div>
               {d.createdBy.isMe && (
                 <div className="flex items-center gap-2 border-t border-line pt-3">
                   <span className="flex-1 text-[12px] font-medium text-ink-2">あなたが登録したお店です</span>
@@ -209,6 +164,17 @@ export function ShopScreen({ id, from, initial }: { id: string; from: 'home' | '
               ) : (
                 <div className="text-[13px] text-ink-2">まだいません。最初の「気になる」をどうぞ</div>
               )}
+              <button
+                onClick={toggleLike}
+                aria-pressed={d.liked}
+                className={cx(
+                  'h-11 rounded-full border-[1.5px] text-[15px] font-bold',
+                  d.liked ? 'border-mustard bg-mustard-soft text-mustard-ink' : 'border-line-strong bg-white text-ink',
+                  press,
+                )}
+              >
+                {d.liked ? '🌱 気になる ✓' : '🌱 気になる'}
+              </button>
             </div>
           </>
         )}

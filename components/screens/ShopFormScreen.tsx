@@ -102,21 +102,6 @@ export function ShopFormScreen({ editId, initial }: { editId?: string; initial?:
   const canSubmit = missing === 0 && !dup && !busy && !loadingEdit && !loadErr;
   const reason = dup ? 'すでに登録されているお店です' : urlErr ? 'リンクを確認してください' : missing > 0 ? `必須項目があと${missing}つです` : undefined;
 
-  const paste = async () => {
-    let text = '';
-    try {
-      text = (await navigator.clipboard.readText()).trim();
-    } catch {
-      text = '';
-    }
-    if (text) {
-      upd({ url: text });
-    } else {
-      document.getElementById('shop-form-url')?.focus();
-      toast.show('リンクを長押しして貼り付けてください', 'ok');
-    }
-  };
-
   const submit = async () => {
     if (!canSubmit) return;
     const input: ShopInput = {
@@ -232,9 +217,7 @@ export function ShopFormScreen({ editId, initial }: { editId?: string; initial?:
       {/* Googleマップのリンク */}
       <div className="flex flex-col gap-2">
         <FieldLabel label="Googleマップのリンク" kind="req" />
-        <div className="flex gap-2">
-          <TextInput
-            id="shop-form-url"
+        <TextInput
             value={f.url}
             onChange={(e) => upd({ url: e.target.value })}
             placeholder="https://maps.app.goo.gl/…"
@@ -243,16 +226,8 @@ export function ShopFormScreen({ editId, initial }: { editId?: string; initial?:
             aria-label="Googleマップのリンク"
             aria-invalid={urlErr}
             invalid={urlErr}
-            className="min-w-0 flex-1 px-3 !text-[14px]"
+            className="px-3 !text-[14px]"
           />
-          <button
-            type="button"
-            onClick={paste}
-            className="h-12 flex-none cursor-pointer whitespace-nowrap rounded-input border-[1.5px] border-line-strong bg-white px-3 text-[14px] font-bold text-ink transition-transform duration-100 active:scale-[.97]"
-          >
-            📋 貼り付け
-          </button>
-        </div>
         {urlErr && (
           <div className="text-[13px] font-bold leading-[1.5] text-danger">⚠ Googleマップのリンクではないようです。Googleマップで店を開いてリンクをコピーしてください</div>
         )}

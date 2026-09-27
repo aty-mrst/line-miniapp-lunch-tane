@@ -36,6 +36,7 @@ export function createHttpApi(getIdToken: () => string | null, devUser?: string)
       }
     },
     register: (i) => call('POST', '/api/me', i),
+    updateMe: (i) => call('PATCH', '/api/me', i),
     getHome: () => call('GET', '/api/home'),
     listShops: (f) => call('GET', `/api/shops${q(f)}`),
     checkShop: ({ url, name, excludeId }) =>

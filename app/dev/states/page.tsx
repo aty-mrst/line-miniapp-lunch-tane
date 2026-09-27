@@ -39,6 +39,7 @@ const SECTIONS: { id: string; title: string; states: State[] }[] = [
       { id: '0-3', label: 'アイコン入力中', mock: { registered: false }, initial: { register: { kbOpen: true } } },
       { id: '0-4', label: '入力済み', mock: { registered: false }, initial: { register: { name: '田中', icon: '🐣' } } },
       { id: '0-5', label: 'アイコンの入力エラー', optional: true, mock: { registered: false }, initial: { register: { name: '田中', icon: '🐣🍙' } } },
+      { id: '0-6', label: 'プロフィール編集（追加）', optional: true, path: '/me' },
     ],
   },
   {

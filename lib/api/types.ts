@@ -60,6 +60,7 @@ export interface Api {
   now(): Date;
   getMe(): Promise<Me | null>;
   register(input: { name: string; icon: string }): Promise<Me>;
+  updateMe(input: { name: string; icon: string }): Promise<Me>;
   getHome(): Promise<HomeData>;
   listShops(filter?: ShopFilter): Promise<ShopSummary[]>;
   checkShop(q: { url: string; name: string; excludeId?: string }): Promise<DuplicateShop | null>;

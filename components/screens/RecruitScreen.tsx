@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { ApiError, type ShopDetail } from '@/lib/api/types';
-import { DEPART_TIMES, PLACES, type DepartTime, type Place } from '@/lib/constants';
+import { DEPART_RANGE, PLACES, departTimes, isDepartTime, type DepartTime, type Place } from '@/lib/constants';
 import { isPast, jstTime } from '@/lib/time';
 import { useApp, useNav, useToast } from '../providers';
 import { useAsync } from '../useAsync';
@@ -9,7 +9,7 @@ import { AvatarStack, EmojiCircle, FieldLabel, PrimaryButton, Screen, ScreenHead
 
 export type RecruitInitial = { time?: string; place?: string; placeOther?: string; note?: string; done?: boolean };
 
-const asTime = (t?: string): DepartTime | null => (t && (DEPART_TIMES as readonly string[]).includes(t) ? (t as DepartTime) : null);
+const asTime = (t?: string): DepartTime | null => (t && isDepartTime(t) ? t : null);
 const asPlace = (p?: string): Place | null => (p && PLACES.some((x) => x.v === p) ? (p as Place) : null);
 
 export function RecruitScreen({ shopId, initial }: { shopId: string; initial?: RecruitInitial }) {
@@ -26,7 +26,8 @@ export function RecruitScreen({ shopId, initial }: { shopId: string; initial?: R
   const [busy, setBusy] = useState(false);
 
   const now = api.now();
-  const allPast = DEPART_TIMES.every((t) => isPast(t, now));
+  const options = departTimes().filter((t) => !isPast(t, now)); // 今より後の時間だけ
+  const allPast = options.length === 0;
   const timeOk = !!time && !isPast(time, now);
   const isOther = place === 'その他';
   const placeName = isOther ? placeOther.trim() : place ?? '';
@@ -104,26 +105,32 @@ export function RecruitScreen({ shopId, initial }: { shopId: string; initial?: R
           {/* 出発時間 */}
           <div className="flex flex-col gap-2">
             <FieldLabel label="出発時間" kind="req" right={`いま ${jstTime(now)}`} />
-            <div className="grid grid-cols-3 gap-1.5">
-              {DEPART_TIMES.map((t) => {
-                const past = isPast(t, now);
-                if (past)
-                  return (
-                    <button
-                      key={t}
-                      disabled
-                      className="flex h-[52px] flex-col items-center justify-center rounded-input border-[1.5px] border-disabled-soft bg-disabled-soft p-0 text-ink-disabled"
-                    >
-                      <span className="font-maru text-[17px] font-bold leading-[1.2] line-through">{t}</span>
-                      <span className="text-[10px] font-medium leading-[1.2]">過ぎました</span>
-                    </button>
-                  );
-                return (
-                  <SelectTile key={t} selected={time === t} onClick={() => setTime(t)} className="flex h-[52px] flex-col items-center justify-center">
-                    <span className="font-maru text-[17px] font-bold leading-[1.2]">{t}</span>
-                  </SelectTile>
-                );
-              })}
+            <div className="relative">
+              <select
+                aria-label="出発時間"
+                value={timeOk ? time! : ''}
+                disabled={allPast}
+                onChange={(e) => setTime(e.target.value || null)}
+                className={cx(
+                  'h-[52px] w-full cursor-pointer appearance-none rounded-input border-[1.5px] pl-4 pr-10 font-maru text-[17px] font-bold outline-none',
+                  allPast
+                    ? 'border-disabled-soft bg-disabled-soft text-ink-disabled'
+                    : timeOk
+                      ? 'border-tomato bg-tomato-soft text-tomato-ink'
+                      : 'border-line-strong bg-white text-ink-2',
+                )}
+              >
+                <option value="">{allPast ? '今日はもう選べる時間がありません' : '時間を選ぶ'}</option>
+                {options.map((t) => (
+                  <option key={t} value={t}>
+                    {t}
+                  </option>
+                ))}
+              </select>
+              <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[13px] text-ink-2">▾</span>
+            </div>
+            <div className="text-[12px] text-ink-2">
+              {DEPART_RANGE.from}〜{DEPART_RANGE.to}の{DEPART_RANGE.stepMin}分刻みで選べます
             </div>
           </div>
 

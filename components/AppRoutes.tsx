@@ -8,6 +8,7 @@ import { ShopScreen, type ShopInitial } from './screens/ShopScreen';
 import { ShopFormScreen, type ShopFormInitial } from './screens/ShopFormScreen';
 import { RecruitScreen, type RecruitInitial } from './screens/RecruitScreen';
 import { ListScreen, type ListInitial } from './screens/ListScreen';
+import { ProfileScreen } from './screens/ProfileScreen';
 
 /** 各画面に渡す「初期状態」（/dev/states でボードの各状態を再現するため） */
 export type ScreenInitial = {
@@ -21,7 +22,7 @@ export type ScreenInitial = {
 
 /**
  * 起動時の判定（LIFF → /api/me）と、path → 画面の対応。
- * ルート：/ /register /shops /shops/new /shops/[id] /shops/[id]/edit /shops/[id]/recruit
+ * ルート：/ /me /register /shops /shops/new /shops/[id] /shops/[id]/edit /shops/[id]/recruit
  */
 export function AppRoutes({ initial, bootDelay = 0, holdBoot = false }: { initial?: ScreenInitial; bootDelay?: number; holdBoot?: boolean }) {
   const { api, me, setMe } = useApp();
@@ -71,6 +72,7 @@ export function AppRoutes({ initial, bootDelay = 0, holdBoot = false }: { initia
   const params = new URLSearchParams(query);
   const seg = pathname.split('/').filter(Boolean);
 
+  if (seg[0] === 'me') return <ProfileScreen />;
   if (seg[0] === 'shops') {
     if (seg.length === 1) return <ListScreen initial={initial?.list} />;
     if (seg[1] === 'new') return <ShopFormScreen initial={initial?.form} />;
